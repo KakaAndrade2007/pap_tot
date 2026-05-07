@@ -1,42 +1,84 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+  --vermelho-epbjc: #e20613;
+  --vermelho-dark: #b8050f;
+  --branco: #ffffff;
+  --cinza-claro: #f8f9fa;
+  --preto-texto: #1a1a1a;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.totem-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--branco);
+  color: var(--preto-texto);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.screen { text-align: center; width: 90%; max-width: 800px; }
+
+/* TELA DE BOAS VINDAS */
+.logo-placeholder { 
+  font-size: 3rem; font-weight: 900; color: var(--vermelho-epbjc); margin-bottom: 1rem;
+}
+.title { font-size: 3.5rem; color: var(--preto-texto); font-weight: 800; margin-bottom: 2rem; }
+.touch-indicator { color: var(--vermelho-epbjc); font-size: 1.5rem; font-weight: 600; animation: pulse 2s infinite; }
+
+/* BOTOES DE CATEGORIA */
+.grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+.menu-btn {
+  background: var(--branco);
+  border: 3px solid var(--vermelho-epbjc);
+  color: var(--vermelho-epbjc);
+  padding: 40px 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.menu-btn:active { background: var(--vermelho-epbjc); color: var(--branco); }
+
+/* TECLADO NUMÉRICO */
+.pin-display { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
+.pin-dot { width: 25px; height: 25px; border: 3px solid var(--vermelho-epbjc); border-radius: 50%; }
+.pin-dot.filled { background: var(--vermelho-epbjc); }
+
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 400px; margin: 0 auto; }
+.num-btn {
+  background: var(--cinza-claro);
+  border: none;
+  padding: 25px;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 15px;
+  color: var(--preto-texto);
+  cursor: pointer;
+}
+.num-btn:active { background: var(--vermelho-epbjc); color: white; }
+.num-btn.delete { color: var(--vermelho-epbjc); }
+
+.confirm-btn {
+  margin-top: 30px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 20px 60px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50px;
+  width: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+.exit-btn { background: none; border: none; color: #999; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
 
-.card {
-  padding: 2em;
-}
+.id-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; }
+.back-arrow { background: none; border: none; color: var(--vermelho-epbjc); cursor: pointer; }
 
-.read-the-docs {
-  color: #888;
-}
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
