@@ -14,7 +14,7 @@ export default function App() {
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [reservas, setReservas] = useState<any[]>([])
-  const [loading, setLoading] = useState(false) // Agora vamos usar!
+  const [loading, setLoading] = useState(false) 
 
   async function handleLogin(user: string, pass: string) {
     setLoading(true)
