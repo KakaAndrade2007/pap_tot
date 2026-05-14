@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './services/supabase'
+import { EmailService } from './services/email'
 import { ReservasService } from './services/reservas'
 import { CategorySelector } from './components/CategorySelector'
 import { Login } from './components/Login'
@@ -14,7 +15,7 @@ export default function App() {
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [reservas, setReservas] = useState<any[]>([])
-  const [loading, setLoading] = useState(false) 
+  const [loading, setLoading] = useState(false)
 
   async function handleLogin(user: string, pass: string) {
     setLoading(true)
@@ -38,35 +39,57 @@ export default function App() {
     }
   }
 
-  async function handleRegister(nome: string, user: string, pass: string) {
-    setLoading(true)
+  async function handleRegister(nome: string, user: string, pass: string, email: string) {
+    setLoading(true);
     try {
       const { error } = await supabase
         .from('perfis')
-        .insert([{ nome, identificador: user.toLowerCase().trim(), senha: pass, tipo: category, saldo: 10.00 }])
+        .insert([{
+          nome,
+          identificador: user.toLowerCase().trim(),
+          senha: pass,
+          tipo: category,
+          email: email, // Agora salvamos o email
+          saldo: 10.00
+        }]);
 
-      if (error) throw error
-      alert("Conta criada! Faça login.")
-      setStep('login')
+      if (error) throw error;
+      alert("Conta criada! Já podes fazer login.");
+      setStep('login');
     } catch (err: any) {
-      alert("Erro: " + err.message)
+      alert(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleReserva(data: string) {
-    if (!usuarioLogado || !data) return
-    setLoading(true)
+    if (!usuarioLogado || !data) return;
+    setLoading(true);
     try {
-      const novoSaldo = await ReservasService.criarReserva(usuarioLogado.id, data, usuarioLogado.saldo)
-      setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo })
-      alert("Almoço reservado!")
-      carregarReservas()
+      // 1. Grava no banco e desconta saldo
+      const novoSaldo = await ReservasService.criarReserva(
+        usuarioLogado.id,
+        data,
+        usuarioLogado.saldo
+      );
+
+      // 2. Atualiza a UI
+      setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo });
+      alert("Reserva confirmada!");
+
+      // 3. Dispara o Email em segundo plano (não trava o totem)
+      EmailService.enviarFatura(
+        usuarioLogado.nome,
+        usuarioLogado.email,
+        data
+      ).catch(err => console.error("Email falhou, mas a reserva foi feita:", err));
+
+      carregarReservas();
     } catch (err: any) {
-      alert(err.message)
+      alert(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -92,29 +115,29 @@ export default function App() {
       )}
 
       {step === 'login' && (
-        <Login 
-          category={category || ''} 
-          onLogin={handleLogin} 
-          onBack={() => setStep('category')} 
+        <Login
+          category={category || ''}
+          onLogin={handleLogin}
+          onBack={() => setStep('category')}
           onGoToRegister={() => setStep('register')}
           isLoading={loading} // Passando o estado
         />
       )}
 
       {step === 'register' && (
-        <Register 
-          category={category || ''} 
-          onRegister={handleRegister} 
+        <Register
+          category={category || ''}
+          onRegister={handleRegister}
           onBack={() => setStep('login')}
           isLoading={loading} // Passando o estado
         />
       )}
 
       {step === 'home' && usuarioLogado && (
-        <Dashboard 
-          user={usuarioLogado} 
-          reservas={reservas} 
-          onLogout={resetAll} 
+        <Dashboard
+          user={usuarioLogado}
+          reservas={reservas}
+          onLogout={resetAll}
           onNovaReserva={handleReserva}
           isLoading={loading} // Passando o estado
         />

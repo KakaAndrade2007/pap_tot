@@ -1,40 +1,90 @@
 import { useState } from 'react'
-import { User, Lock, UserPlus, ArrowLeft } from 'lucide-react'
+import { User, Lock, UserPlus, Mail, ArrowLeft } from 'lucide-react'
 
 interface RegisterProps {
   category: string;
-  onRegister: (nome: string, user: string, pass: string) => void;
+  onRegister: (nome: string, user: string, pass: string, email: string) => void;
   onBack: () => void;
-  isLoading: boolean; // Adicionado aqui
+  isLoading: boolean;
 }
 
 export function Register({ category, onRegister, onBack, isLoading }: RegisterProps) {
   const [nome, setNome] = useState('')
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
+  const [email, setEmail] = useState('')
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onRegister(nome, user, pass, email)
+  }
 
   return (
     <div className="auth-box">
-      <button className="back-btn" onClick={onBack}><ArrowLeft /> VOLTAR</button>
-      <h2>Criar Conta - <span className="badge">{category}</span></h2>
-      
-      <div className="input-group">
-        <UserPlus /><input placeholder="Nome Completo" onChange={e => setNome(e.target.value)} />
-      </div>
-      <div className="input-group">
-        <User /><input placeholder="Utilizador" onChange={e => setUser(e.target.value)} />
-      </div>
-      <div className="input-group">
-        <Lock /><input type="password" placeholder="Senha" onChange={e => setPass(e.target.value)} />
-      </div>
-      
-      <button 
-        className="btn-auth" 
-        onClick={() => onRegister(nome, user, pass)}
-        disabled={isLoading}
-      >
-        {isLoading ? 'A REGISTAR...' : 'REGISTAR'}
+      <button className="back-btn" onClick={onBack}>
+        <ArrowLeft size={20} /> VOLTAR
       </button>
+
+      <h2>Criar Conta</h2>
+      <p className="badge">{category.toUpperCase()}</p>
+
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="input-group">
+          <UserPlus size={20} />
+          <input 
+            type="text"
+            placeholder="Nome Completo" 
+            value={nome}
+            onChange={e => setNome(e.target.value)} 
+            required 
+          />
+        </div>
+
+        <div className="input-group">
+          <Mail size={20} />
+          <input 
+            type="email" 
+            placeholder="E-mail (para faturas)" 
+            value={email}
+            onChange={e => setEmail(e.target.value)} 
+            required 
+          />
+        </div>
+
+        <div className="input-group">
+          <User size={20} />
+          <input 
+            type="text"
+            placeholder="Nome de Utilizador" 
+            value={user}
+            onChange={e => setUser(e.target.value)} 
+            required 
+          />
+        </div>
+
+        <div className="input-group">
+          <Lock size={20} />
+          <input 
+            type="password" 
+            placeholder="Palavra-passe" 
+            value={pass}
+            onChange={e => setPass(e.target.value)} 
+            required 
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          className="btn-auth" 
+          disabled={isLoading}
+        >
+          {isLoading ? 'A REGISTAR...' : 'CRIAR CONTA'}
+        </button>
+      </form>
+
+      <p className="footer-text">
+        Ao registar-se, concorda com os termos de uso do refeitório EPBJC.
+      </p>
     </div>
   )
 }
