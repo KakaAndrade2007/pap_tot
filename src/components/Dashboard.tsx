@@ -24,10 +24,10 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
           {view === 'faturas' && (
             <button className="back-view-btn" onClick={() => setView('menu')}><ArrowLeft /> VOLTAR</button>
           )}
-          <button className="logout-btn" onClick={onLogout}><LogOut size={30}/></button>
+          <button className="logout-btn" onClick={onLogout}><LogOut size={30} /></button>
         </div>
       </div>
-      
+
       <div className="main-grid">
         {/* Lado Esquerdo: Saldo e Navegação */}
         <div className="side-panel">
@@ -58,17 +58,17 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
                     <CalendarIcon size={18} />
                     Escolha a data
                   </label>
-                  <input 
-                    type="date" 
-                    id="dateInput" 
+                  <input
+                    type="date"
+                    id="dateInput"
                     className="totem-input"
                     value={selectedDate}
                     min={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setSelectedDate(e.target.value)}
                   />
                 </div>
-                <button 
-                  className="btn-confirm" 
+                <button
+                  className="btn-confirm"
                   disabled={isLoading}
                   onClick={() => onNovaReserva(selectedDate)}
                 >
