@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from './services/supabase'
 import { EmailService } from './services/email'
 import { ReservasService } from './services/reservas'
+import { AuthService } from './services/auth' // Importando o serviço de hash
 import { CategorySelector } from './components/CategorySelector'
 import { Login } from './components/Login'
 import { Register } from './components/Register'
@@ -17,47 +18,68 @@ export default function App() {
   const [reservas, setReservas] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
+  // LOGIN SEGURO COM BCRYPT
   async function handleLogin(user: string, pass: string) {
     setLoading(true)
     try {
-      const { data, error } = await supabase
+      // 1. Procuramos o perfil apenas pelo identificador e tipo
+      const { data: perfil, error } = await supabase
         .from('perfis')
         .select('*')
         .eq('identificador', user.toLowerCase().trim())
-        .eq('senha', pass)
         .eq('tipo', category)
         .single()
 
-      if (error || !data) {
-        alert("Credenciais erradas!")
-      } else {
-        setUsuarioLogado({ id: data.id, nome: data.nome, saldo: Number(data.saldo), tipo: data.tipo })
-        setStep('home')
+      if (error || !perfil) {
+        alert("Utilizador não encontrado nesta categoria!")
+        return
       }
+
+      // 2. Comparamos a senha digitada com o Hash guardado no banco
+      const senhaValida = await AuthService.comparePassword(pass, perfil.senha)
+
+      if (senhaValida) {
+        setUsuarioLogado({ 
+          id: perfil.id, 
+          nome: perfil.nome, 
+          saldo: Number(perfil.saldo), 
+          tipo: perfil.tipo,
+          email: perfil.email // Importante para o EmailService funcionar depois
+        })
+        setStep('home')
+      } else {
+        alert("Palavra-passe incorreta!")
+      }
+    } catch (err) {
+      alert("Erro ao entrar. Tente novamente.")
     } finally {
       setLoading(false)
     }
   }
 
+  // REGISTO SEGURO COM BCRYPT
   async function handleRegister(nome: string, user: string, pass: string, email: string) {
     setLoading(true);
     try {
+      // ENCRIPTAR A SENHA ANTES DE SALVAR
+      const hashedPass = await AuthService.hashPassword(pass);
+
       const { error } = await supabase
         .from('perfis')
         .insert([{
           nome,
           identificador: user.toLowerCase().trim(),
-          senha: pass,
+          senha: hashedPass, // Salvando o Hash seguro
           tipo: category,
-          email: email, // Agora salvamos o email
+          email: email,
           saldo: 10.00
         }]);
 
       if (error) throw error;
-      alert("Conta criada! Já podes fazer login.");
+      alert("Conta criada com segurança! Já podes fazer login.");
       setStep('login');
     } catch (err: any) {
-      alert(err.message);
+      alert("Erro no registo: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -67,23 +89,21 @@ export default function App() {
     if (!usuarioLogado || !data) return;
     setLoading(true);
     try {
-      // 1. Grava no banco e desconta saldo
       const novoSaldo = await ReservasService.criarReserva(
         usuarioLogado.id,
         data,
         usuarioLogado.saldo
       );
 
-      // 2. Atualiza a UI
       setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo });
-      alert("Reserva confirmada!");
+      alert("Reserva confirmada! A enviar fatura...");
 
-      // 3. Dispara o Email em segundo plano (não trava o totem)
+      // Envio de email com os dados do utilizador logado
       EmailService.enviarFatura(
         usuarioLogado.nome,
         usuarioLogado.email,
         data
-      ).catch(err => console.error("Email falhou, mas a reserva foi feita:", err));
+      ).catch(err => console.error("Email falhou:", err));
 
       carregarReservas();
     } catch (err: any) {
@@ -120,7 +140,7 @@ export default function App() {
           onLogin={handleLogin}
           onBack={() => setStep('category')}
           onGoToRegister={() => setStep('register')}
-          isLoading={loading} // Passando o estado
+          isLoading={loading}
         />
       )}
 
@@ -129,7 +149,7 @@ export default function App() {
           category={category || ''}
           onRegister={handleRegister}
           onBack={() => setStep('login')}
-          isLoading={loading} // Passando o estado
+          isLoading={loading}
         />
       )}
 
@@ -139,7 +159,7 @@ export default function App() {
           reservas={reservas}
           onLogout={resetAll}
           onNovaReserva={handleReserva}
-          isLoading={loading} // Passando o estado
+          isLoading={loading}
         />
       )}
     </div>

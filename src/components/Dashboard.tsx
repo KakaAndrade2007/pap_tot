@@ -11,6 +11,7 @@ interface DashboardProps {
 
 export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }: DashboardProps) {
   const [view, setView] = useState<'menu' | 'faturas'>('menu')
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
 
   return (
     <div className="home-screen">
@@ -52,20 +53,24 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
             <>
               <h3><Utensils /> Reservar Almoço</h3>
               <div className="reserva-box-inner">
-                <input 
-                  type="date" 
-                  id="dateInput" 
-                  className="totem-input"
-                  defaultValue={new Date().toISOString().split('T')[0]}
-                  min={new Date().toISOString().split('T')[0]} 
-                />
+                <div className="date-field">
+                  <label htmlFor="dateInput">
+                    <CalendarIcon size={18} />
+                    Escolha a data
+                  </label>
+                  <input 
+                    type="date" 
+                    id="dateInput" 
+                    className="totem-input"
+                    value={selectedDate}
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                  />
+                </div>
                 <button 
                   className="btn-confirm" 
                   disabled={isLoading}
-                  onClick={() => {
-                    const val = (document.getElementById('dateInput') as HTMLInputElement).value;
-                    onNovaReserva(val);
-                  }}
+                  onClick={() => onNovaReserva(selectedDate)}
                 >
                   {isLoading ? 'A PROCESSAR...' : 'CONFIRMAR (2.50€)'}
                 </button>

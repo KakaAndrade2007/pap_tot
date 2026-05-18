@@ -33,11 +33,16 @@ input {
 .totem-container {
   display: grid;
   place-items: center;
+  justify-items: center;
   min-height: 100vh;
-  max-width: 1100px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 2rem 1.5rem 3rem;
   box-sizing: border-box;
+}
+
+.totem-container > * {
+  width: min(100%, 760px);
 }
 
 .screen.center {
@@ -68,16 +73,17 @@ input {
   border-radius: 1.5rem;
   background: rgba(255, 255, 255, 0.95);
   color: var(--text);
-  min-height: 160px;
+  min-height: 200px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
+  gap: 1rem;
+  padding: 2rem;
   text-transform: uppercase;
   font-weight: 700;
+  font-size: 1.1rem;
   letter-spacing: 0.04em;
   transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
   box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
@@ -92,8 +98,8 @@ input {
 
 .auth-box,
 .home-screen {
-  width: 100%;
-  max-width: 900px;
+  width: min(100%, 720px);
+  max-width: 720px;
   margin: auto;
   padding: 2rem;
   background: var(--surface);
@@ -106,9 +112,10 @@ input {
 .back-btn,
 .logout-btn,
 .fatura-nav-btn,
-.btn-auth {
+.btn-auth,
+.btn-confirm {
   border: none;
-  border-radius: 999px;
+  border-radius: 1.5rem;
   cursor: pointer;
 }
 
@@ -172,15 +179,17 @@ h2 {
 .btn-auth,
 .fatura-nav-btn {
   width: 100%;
-  padding: 1rem 1.1rem;
+  min-height: 80px;
+  padding: 1.2rem 1.3rem;
   margin-top: 0.5rem;
   font-weight: 700;
+  font-size: 1.1rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--border);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
   transition: transform 0.25s ease, filter 0.25s ease, background 0.25s ease;
 }
 
@@ -240,8 +249,8 @@ h2 {
 }
 
 .logout-btn {
-  width: 3.75rem;
-  height: 3.75rem;
+  width: 4.5rem;
+  height: 4.5rem;
   display: grid;
   place-items: center;
   background: rgba(254, 226, 226, 0.9);
@@ -304,13 +313,69 @@ h2 {
   gap: 1rem;
 }
 
+.date-field {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 100%;
+}
+
+.date-field label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.date-field label svg {
+  color: #991b1b;
+}
+
 .totem-input {
   width: 100%;
+  max-width: 360px;
+  min-height: 60px;
   border-radius: 1.25rem;
   border: 1px solid var(--border);
   padding: 0.95rem 1rem;
   background: rgba(255, 255, 255, 0.95);
   color: var(--text);
+  font-size: 1rem;
+}
+
+.totem-input:focus {
+  outline: none;
+  border-color: rgba(220, 38, 38, 0.5);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.btn-confirm {
+  width: 100%;
+  padding: 1rem 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #dc2626;
+  border: 1px solid #b91c1c;
+  border-radius: 1.35rem;
+  min-height: 70px;
+  font-size: 1.05rem;
+  padding: 1.2rem 1.25rem;
+  box-shadow: 0 15px 30px rgba(220, 38, 38, 0.22);
+  transition: transform 0.25s ease, filter 0.25s ease, background 0.25s ease;
+}
+
+.btn-confirm:hover {
+  transform: translateY(-2px);
+  background: #b91c1c;
+}
+
+.btn-confirm:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+  background: #fca5a5;
+  border-color: #fca5a5;
 }
 
 .faturas-list {
