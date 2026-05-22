@@ -1,12 +1,12 @@
 import emailjs from '@emailjs/browser';
 
-export const EmailService = { // O "export" é obrigatório aqui!
+export const EmailService = { 
   async enviarFatura(nome: string, email: string, dataReserva: string) {
     const templateParams = {
-      to_name: nome,         // Vai para {{to_name}}
-      to_email: email,       // Vai para {{to_email}}
-      reserva_date: dataReserva,    // Vai para {{reserva_date}}
-      valor: "2.50€",        // Vai para {{valor}}
+      to_name: nome,        
+      to_email: email,       
+      reserva_date: dataReserva,   
+      valor: "2.50€",        
       data_emissao: new Date().toLocaleString('pt-PT')
     };
 
