@@ -101,7 +101,7 @@ body {
   width: clamp(72px, 14vw, 110px);
   height: clamp(72px, 14vw, 110px);
   align-self: center;
-  margin-bottom: clamp(8px, 1.5vh, 16px);
+  margin-bottom: clamp(4px, 0.6vh, 8px);
 }
 
 .splash-school-name {
@@ -232,8 +232,31 @@ body {
 }
 
 .auth-box {
-  justify-content: space-evenly;
-  gap: clamp(12px, 2vh, 28px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: clamp(8px, 1.2vh, 14px);
+  padding-top: clamp(8px, 1vh, 12px);
+  overflow-y: auto;
+}
+
+.auth-box .back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 2;
+}
+
+.auth-box .back-btn svg {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.auth-category-title {
+  margin-top: 0;
 }
 
 .auth-box h2 {
@@ -253,12 +276,13 @@ body {
 }
 
 .auth-form {
-  flex: 1;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  gap: clamp(8px, 1.5vh, 16px);
+  justify-content: flex-start;
+  gap: clamp(8px, 1.2vh, 12px);
   min-height: 0;
+  margin-top: clamp(4px, 0.8vh, 8px);
 }
 
 .auth-box .footer-text {
@@ -300,7 +324,7 @@ body {
   flex-direction: column;
   align-items: stretch;
   text-align: left;
-  gap: clamp(16px, 2.5vh, 28px);
+  gap: clamp(12px, 1.8vh, 20px);
   min-height: 0;
 }
 
@@ -309,7 +333,7 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-  padding-bottom: clamp(12px, 2vh, 20px);
+  padding-bottom: clamp(10px, 1.5vh, 16px);
   border-bottom: 2px solid var(--border);
   flex-shrink: 0;
 }
@@ -363,7 +387,7 @@ body {
 .acoes-col-left {
   display: flex;
   flex-direction: column;
-  gap: clamp(14px, 2vh, 24px);
+  gap: clamp(12px, 1.8vh, 18px);
   flex: 1;
   min-height: 0;
 }
@@ -371,13 +395,34 @@ body {
 .acoes-col-left .btn-grande-red,
 .acoes-col-left .btn-grande-white {
   width: 100%;
-  min-height: clamp(100px, 14vh, 160px);
+  min-height: clamp(88px, 12vh, 130px);
   flex: 1;
+}
+
+.dashboard-col-right-area {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: clamp(8px, 1.2vh, 12px);
+}
+
+.ementa-semana-titulo {
+  margin: 0;
+  padding: clamp(10px, 1.4vh, 14px) clamp(14px, 2vw, 20px);
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: white;
+  background: var(--text);
+  border-radius: 16px;
+  flex-shrink: 0;
+  text-align: center;
 }
 
 .dashboard-col-right {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-height: 0;
   border: 3px solid var(--text);
   border-radius: 24px;
@@ -385,27 +430,34 @@ body {
   background: #fafafa;
 }
 
-.ementa-semana-titulo {
-  margin: 0;
-  padding: clamp(14px, 2vh, 20px) clamp(18px, 2.5vw, 28px);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  color: white;
-  background: var(--text);
-  flex-shrink: 0;
-}
-
-.ementa-dias-lista {
-  list-style: none;
-  margin: 0;
-  padding: clamp(10px, 1.5vh, 16px);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.5vh, 14px);
-  overflow-y: auto;
+.ementa-marquee-viewport {
   flex: 1;
   min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ementa-marquee-track {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vh, 22px);
+  padding: clamp(12px, 1.8vh, 18px);
+  animation: ementa-scroll-down 28s linear infinite;
+  will-change: transform;
+}
+
+.ementa-marquee-viewport:hover .ementa-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes ementa-scroll-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
 }
 
 .ementa-dia-card {
@@ -538,6 +590,10 @@ body {
 .back-btn {
   margin-bottom: 20px;
   align-self: flex-start;
+}
+
+.auth-box .back-btn {
+  margin-bottom: 0;
 }
 
 /* 8. HEADER DO DASHBOARD */

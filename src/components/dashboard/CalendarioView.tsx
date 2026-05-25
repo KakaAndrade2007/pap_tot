@@ -11,7 +11,9 @@ interface CalendarioViewProps {
 export function CalendarioView({ dataSelecionada, setDataSelecionada, onBack, onConfirm, isLoading }: CalendarioViewProps) {
   return (
     <div className="view-container">
-      <button className="back-btn" onClick={onBack}><ChevronLeft /></button>
+      <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
+        <ChevronLeft />
+      </button>
       <h2 className="view-title">Escolha o dia</h2>
       
       <div className="calendario-grid">

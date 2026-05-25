@@ -23,8 +23,8 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
   return (
     <div className="auth-box">
       <EpbjcLogo className="school-logo school-logo--auth" />
-      <button className="back-btn" onClick={onBack}>
-        <ArrowLeft size={20} /> VOLTAR
+      <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
+        <ArrowLeft size={20} />
       </button>
 
       <h2>Criar Conta</h2>

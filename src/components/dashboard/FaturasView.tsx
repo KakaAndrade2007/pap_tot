@@ -18,8 +18,9 @@ export function FaturasView({ reservas, onBack }: FaturasViewProps) {
 
   return (
     <div className="view-container">
-      {/* Seta de Voltar Minimalista */}
-      <button className="back-btn" onClick={onBack}><ChevronLeft /></button>
+      <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
+        <ChevronLeft />
+      </button>
       
       {/* Abas de Navegação Ajustadas */}
       <div className="faturas-tabs">

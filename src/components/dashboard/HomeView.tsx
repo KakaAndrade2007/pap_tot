@@ -54,20 +54,24 @@ export function HomeView({ tipoLabel, nome, saldo, onNavigate, onAdicionarSaldo 
           </div>
         </aside>
 
-        <section className="dashboard-col-right">
+        <div className="dashboard-col-right-area">
           <h3 className="ementa-semana-titulo">Ementa da semana</h3>
-          <ul className="ementa-dias-lista">
-            {EMENTA_SEMANA.map((item) => (
-              <li key={item.dia} className="ementa-dia-card">
-                <img src={item.img} alt={item.prato} className="ementa-dia-img" />
-                <div className="ementa-dia-info">
-                  <span className="ementa-dia-nome">{item.dia}</span>
-                  <p className="ementa-dia-prato">{item.prato}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+          <section className="dashboard-col-right">
+            <div className="ementa-marquee-viewport">
+              <div className="ementa-marquee-track">
+                {[...EMENTA_SEMANA, ...EMENTA_SEMANA].map((item, index) => (
+                  <article key={`${item.dia}-${index}`} className="ementa-dia-card">
+                    <img src={item.img} alt={item.prato} className="ementa-dia-img" />
+                    <div className="ementa-dia-info">
+                      <span className="ementa-dia-nome">{item.dia}</span>
+                      <p className="ementa-dia-prato">{item.prato}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   )

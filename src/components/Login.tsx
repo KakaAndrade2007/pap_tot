@@ -25,7 +25,9 @@ export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: 
   return (
     <div className="auth-box">
       <EpbjcLogo className="school-logo school-logo--auth" />
-      <button className="back-btn" onClick={onBack}><ArrowLeft /> VOLTAR</button>
+      <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
+        <ArrowLeft size={20} />
+      </button>
       <h2 className="auth-category-title">{tipoLabel}</h2>
       
       <div className="input-group">
