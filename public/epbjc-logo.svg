@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="EPBJC">
+  <circle cx="100" cy="100" r="96" fill="#ffffff" stroke="#f40808" stroke-width="8"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#f40808" stroke-width="3"/>
+  <text x="100" y="88" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="800" fill="#f40808">EP</text>
+  <text x="100" y="128" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="800" fill="#f40808">BJC</text>
+  <path d="M40 100 L100 40 L160 100 L100 160 Z" fill="none" stroke="#f40808" stroke-width="2" opacity="0.25"/>
+</svg>

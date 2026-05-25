@@ -4,7 +4,15 @@ import { HomeView } from './dashboard/HomeView'
 import { CalendarioView } from './dashboard/CalendarioView'
 import { FaturasView } from './dashboard/FaturasView'
 
+const TIPO_LABELS: Record<string, string> = {
+  aluno: 'Aluno',
+  professor: 'Professor',
+  funcionario: 'Funcionário',
+  pessoal_predio: 'Pessoal Prédio',
+}
+
 export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }: any) {
+  const tipoLabel = TIPO_LABELS[user.tipo] ?? user.tipo
   const [view, setView] = useState<'home' | 'calendario' | 'faturas'>('home')
   const [dataSelecionada, setDataSelecionada] = useState('')
 
@@ -12,7 +20,10 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
     <div className="home-screen">
       <div className="totem-header">
         <div className="user-info">
-          <p>Olá, <strong>{user.nome}</strong></p>
+          <p className="user-greeting">
+            <span className="tipo-badge">{tipoLabel}</span>
+            <strong>{user.nome}</strong>
+          </p>
           <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
         </div>
         <button className="logout-btn" onClick={onLogout}><LogOut /></button>

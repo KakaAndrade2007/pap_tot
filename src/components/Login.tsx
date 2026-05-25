@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { User, Lock, ArrowLeft } from 'lucide-react'
 
+const TIPO_LABELS: Record<string, string> = {
+  aluno: 'Aluno',
+  professor: 'Professor',
+  funcionario: 'Funcionário',
+  pessoal_predio: 'Pessoal Prédio',
+}
+
 interface LoginProps {
   category: string;
   onLogin: (user: string, pass: string) => void;
@@ -10,13 +17,14 @@ interface LoginProps {
 }
 
 export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: LoginProps) {
+  const tipoLabel = TIPO_LABELS[category] ?? category
   const [userName, setUserName] = useState('') // mudado para evitar conflito
   const [password, setPassword] = useState('')
 
   return (
     <div className="auth-box">
       <button className="back-btn" onClick={onBack}><ArrowLeft /> VOLTAR</button>
-      <h2>Login - <span className="badge">{category}</span></h2>
+      <h2 className="auth-category-title">{tipoLabel}</h2>
       
       <div className="input-group">
         <User />

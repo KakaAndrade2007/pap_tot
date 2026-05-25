@@ -11,8 +11,15 @@ export function CategorySelector({ onSelect }: { onSelect: (cat: any) => void })
 
   return (
     <div className="screen center">
-      <h1 className="title">BEM-VINDO À EPBJC</h1>
-      <div className="grid-buttons">
+      <header className="category-header">
+        <img
+          src="/epbjc-logo.svg"
+          alt="EPBJC"
+          className="school-logo school-logo--header"
+        />
+        <h1 className="title">BEM-VINDO À EPBJC</h1>
+      </header>
+      <div className="grid-buttons grid-buttons--2x2">
         {categories.map(cat => (
           <button key={cat.id} className="cat-btn" onClick={() => onSelect(cat.id)}>
             {cat.icon}

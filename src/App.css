@@ -19,55 +19,169 @@ input {
   user-select: text;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', system-ui, sans-serif;
   background: #ffffff;
   color: var(--text);
-  overflow: hidden; 
+  overflow: hidden;
+  height: 100dvh;
+  width: 100vw;
 }
 
-/* 2. CONTENTOR PRINCIPAL CENTRALIZADO */
+/* 2. CONTENTOR PRINCIPAL — ECRÃ COMPLETO */
 .totem-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  width: 100vw;
-  padding: 20px;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: clamp(16px, 2.5vw, 40px);
+  padding-top: max(clamp(16px, 2.5vw, 40px), env(safe-area-inset-top));
+  padding-bottom: max(clamp(16px, 2.5vw, 40px), env(safe-area-inset-bottom));
   background: #ffffff;
+  box-sizing: border-box;
 }
 
-/* 3. PRIMEIRA TELA (CATEGORY SELECTOR) */
-.screen.center {
+.totem-container > * {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. ECRÃ SPLASH — TOQUE PARA COMEÇAR */
+.splash-screen {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(16px, 3vh, 40px);
+  padding: clamp(24px, 4vw, 56px);
+  border: none;
+  background: #ffffff;
+  cursor: pointer;
   text-align: center;
-  width: 100%;
-  max-width: 900px;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.splash-screen:active {
+  background: #fff8f8;
+}
+
+.school-logo {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.school-logo--splash {
+  width: clamp(140px, 22vw, 240px);
+  height: clamp(140px, 22vw, 240px);
+}
+
+.school-logo--header {
+  width: clamp(72px, 12vw, 120px);
+  height: clamp(72px, 12vw, 120px);
+}
+
+.splash-school-name {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.splash-school-name span {
+  display: block;
+  font-size: clamp(1.2rem, 2.8vw, 2rem);
+  margin-top: 0.35em;
+  color: #333;
+}
+
+.splash-tagline {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.splash-cta {
+  margin: clamp(12px, 4vh, 48px) 0 0;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  font-weight: 900;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes splash-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(0.98); }
+}
+
+.splash-cta.blink {
+  animation: splash-blink 1.4s ease-in-out infinite;
+}
+
+/* 4. PRIMEIRA TELA (CATEGORY SELECTOR) — GRELHA 2×2 */
+.screen.center {
+  align-items: stretch;
+  justify-content: space-between;
+  text-align: center;
+  gap: clamp(16px, 2.5vh, 32px);
+}
+
+.category-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 1.5vh, 16px);
+  flex-shrink: 0;
+}
+
+.category-header .title {
+  margin: 0;
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
   font-weight: 900;
   color: var(--text);
-  margin-bottom: 50px;
   text-transform: uppercase;
   letter-spacing: -2px;
+  flex-shrink: 0;
 }
 
-.grid-buttons {
+.grid-buttons,
+.grid-buttons--2x2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(16px, 2.5vw, 32px);
   width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .cat-btn {
-  height: 280px;
+  min-height: 0;
+  height: 100%;
   border: 3px solid var(--text);
   border-radius: 25px;
   background: var(--white);
@@ -76,8 +190,8 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  font-size: 1.8rem;
+  gap: clamp(12px, 2vh, 24px);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
   font-weight: 800;
   text-transform: uppercase;
   transition: all 0.2s ease;
@@ -91,30 +205,84 @@ body {
 }
 
 .cat-btn svg {
-  width: 70px !important;
-  height: 70px !important;
+  width: clamp(56px, 8vw, 96px) !important;
+  height: clamp(56px, 8vw, 96px) !important;
 }
 
 /* 4. CAIXAS DE INTERAÇÃO (LOGIN / REGISTO / DASHBOARD) */
 .auth-box, .home-screen {
   width: 100%;
-  max-width: 850px;
+  max-width: none;
+  flex: 1;
+  min-height: 0;
   background: var(--white);
-  border: 2px solid #eeeeee;
-  border-radius: 35px;
-  padding: 50px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  border: none;
+  border-radius: 0;
+  padding: clamp(20px, 3vw, 48px);
+  box-shadow: none;
+}
+
+.auth-box {
+  justify-content: space-evenly;
+  gap: clamp(12px, 2vh, 28px);
+}
+
+.auth-box h2 {
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  margin: 0;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.auth-box .badge {
+  text-align: center;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.auth-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: clamp(8px, 1.5vh, 16px);
+  min-height: 0;
+}
+
+.auth-box .footer-text {
+  text-align: center;
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  color: #888;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.home-screen {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.5vh, 32px);
 }
 
 /* 5. BOTÕES DE AÇÃO BASE */
 .btn-auth, .btn-confirm, .btn-confirmar-reserva {
   width: 100%;
-  min-height: 85px;
+  min-height: clamp(80px, 10vh, 120px);
   background: var(--text);
   color: white;
   border: none;
   border-radius: 20px;
-  font-size: 1.6rem;
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+  flex-shrink: 0;
   font-weight: 800;
   text-transform: uppercase;
   cursor: pointer;
@@ -139,12 +307,13 @@ body {
   background: #f9f9f9;
   border: 2px solid #eeeeee;
   border-radius: 18px;
-  padding: 18px 25px;
-  margin-bottom: 15px;
+  padding: clamp(16px, 2.5vh, 28px) clamp(20px, 3vw, 32px);
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .input-group input {
-  font-size: 1.3rem;
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
   width: 100%;
   border: none;
   outline: none;
@@ -187,15 +356,35 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: clamp(16px, 2.5vh, 28px);
   border-bottom: 2px solid var(--border);
-  padding-bottom: 15px;
+  padding-bottom: clamp(12px, 2vh, 20px);
+  flex-shrink: 0;
 }
 
 .user-info p {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
   color: #333;
+}
+
+.user-greeting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tipo-badge {
+  display: inline-block;
+  background: var(--accent-strong, #c41e3a);
+  color: white;
+  padding: 4px 14px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .saldo-badge {
@@ -213,10 +402,11 @@ body {
 .carrossel-ementa {
   position: relative;
   width: 100%;
-  height: 320px;
+  flex: 1;
+  min-height: clamp(220px, 38vh, 520px);
   border-radius: 25px;
   overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: 0;
   border: 3px solid var(--text);
 }
 
@@ -244,7 +434,7 @@ body {
 }
 
 .overlay-ementa h2 {
-  font-size: 2.5rem;
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
   margin: 5px 0 0 0;
   font-weight: 900;
   color: #ffffff;
@@ -254,11 +444,14 @@ body {
 .grid-acoes-totem {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: clamp(16px, 2.5vw, 32px);
+  flex-shrink: 0;
+  min-height: clamp(140px, 22vh, 240px);
 }
 
 .btn-grande-red, .btn-grande-white {
-  height: 180px;
+  min-height: clamp(140px, 22vh, 240px);
+  height: 100%;
   border-radius: 28px;
   display: flex;
   flex-direction: column;
@@ -266,12 +459,18 @@ body {
   align-items: center;
   gap: 16px;
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 1.4rem;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
   font-weight: 900;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-grande-red svg,
+.btn-grande-white svg {
+  width: clamp(36px, 5vw, 56px) !important;
+  height: clamp(36px, 5vw, 56px) !important;
 }
 
 .btn-grande-red { 
@@ -305,10 +504,18 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  gap: clamp(12px, 2vh, 24px);
+}
+
+.home-screen > .view-container {
+  flex: 1;
 }
 
 .view-title {
-  font-size: 2.2rem;
+  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  flex-shrink: 0;
   font-weight: 900;
   margin: 0 0 25px 0;
   color: var(--text);
@@ -318,7 +525,8 @@ body {
 .faturas-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 0;
+  flex-shrink: 0;
   background: #f9f9f9;
   padding: 8px;
   border-radius: 20px;
@@ -355,16 +563,21 @@ body {
 .calendario-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-  margin-bottom: 35px;
+  grid-template-rows: 1fr;
+  gap: clamp(12px, 2vw, 24px);
+  margin-bottom: 0;
+  flex: 1;
+  min-height: clamp(120px, 28vh, 280px);
+  align-items: stretch;
 }
 
 .dia-btn {
-  height: 125px;
+  min-height: 100%;
+  height: auto;
   background: #ffffff;
   border: 3px solid var(--border);
   border-radius: 22px;
-  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 900;
   display: flex;
   flex-direction: column;
@@ -443,7 +656,24 @@ body {
 
 .sem-faturas {
   text-align: center;
-  font-size: 1.2rem;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
   color: #888;
-  margin-top: 40px;
+  margin: auto 0;
+  padding: clamp(24px, 5vh, 64px) 0;
+}
+
+/* 14. TOGGLE REGISTO / LOGIN */
+.btn-toggle {
+  text-align: center;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 15. TOTEM — PAISAGEM (mantém 2×2 nas categorias) */
+@media (orientation: landscape) and (min-height: 500px) {
+  .carrossel-ementa {
+    min-height: clamp(180px, 50vh, 400px);
+  }
 }

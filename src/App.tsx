@@ -3,16 +3,17 @@ import { supabase } from './services/supabase'
 import { EmailService } from './services/email'
 import { ReservasService } from './services/reservas'
 import { AuthService } from './services/auth' // Importando o serviço de hash
+import { SplashScreen } from './components/SplashScreen'
 import { CategorySelector } from './components/CategorySelector'
 import { Login } from './components/Login'
 import { Register } from './components/Register'
 import { Dashboard } from './components/Dashboard'
 import './App.css'
 
-type Step = 'category' | 'login' | 'register' | 'home'
+type Step = 'splash' | 'category' | 'login' | 'register' | 'home'
 
 export default function App() {
-  const [step, setStep] = useState<Step>('category')
+  const [step, setStep] = useState<Step>('splash')
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [reservas, setReservas] = useState<any[]>([])
@@ -125,11 +126,15 @@ export default function App() {
   }, [step])
 
   function resetAll() {
-    setStep('category'); setCategory(null); setUsuarioLogado(null); setReservas([]);
+    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]);
   }
 
   return (
     <div className="totem-container">
+      {step === 'splash' && (
+        <SplashScreen onStart={() => setStep('category')} />
+      )}
+
       {step === 'category' && (
         <CategorySelector onSelect={(cat: string) => { setCategory(cat); setStep('login'); }} />
       )}
