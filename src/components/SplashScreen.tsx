@@ -1,3 +1,5 @@
+import { EpbjcLogo } from './EpbjcLogo'
+
 export function SplashScreen({ onStart }: { onStart: () => void }) {
   return (
     <button
@@ -6,10 +8,9 @@ export function SplashScreen({ onStart }: { onStart: () => void }) {
       onClick={onStart}
       aria-label="Toque no ecrã para começar"
     >
-      <img
-        src="/epbjc-logo.svg"
-        alt="Símbolo da Escola Profissional Bento de Jesus Caraça"
+      <EpbjcLogo
         className="school-logo school-logo--splash"
+        title="Escola Profissional Bento de Jesus Caraça"
       />
       <h1 className="splash-school-name">
         Escola Profissional

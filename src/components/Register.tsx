@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { User, Lock, UserPlus, Mail, ArrowLeft } from 'lucide-react'
+import { EpbjcLogo } from './EpbjcLogo'
 
 interface RegisterProps {
   category: string;
@@ -21,6 +22,7 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
 
   return (
     <div className="auth-box">
+      <EpbjcLogo className="school-logo school-logo--auth" />
       <button className="back-btn" onClick={onBack}>
         <ArrowLeft size={20} /> VOLTAR
       </button>

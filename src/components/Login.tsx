@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { User, Lock, ArrowLeft } from 'lucide-react'
+import { EpbjcLogo } from './EpbjcLogo'
 
 const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
@@ -23,6 +24,7 @@ export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: 
 
   return (
     <div className="auth-box">
+      <EpbjcLogo className="school-logo school-logo--auth" />
       <button className="back-btn" onClick={onBack}><ArrowLeft /> VOLTAR</button>
       <h2 className="auth-category-title">{tipoLabel}</h2>
       

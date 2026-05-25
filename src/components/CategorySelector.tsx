@@ -1,5 +1,6 @@
 // src/components/CategorySelector.tsx
 import { GraduationCap, Apple, Briefcase, Building2 } from 'lucide-react'
+import { EpbjcLogo } from './EpbjcLogo'
 
 export function CategorySelector({ onSelect }: { onSelect: (cat: any) => void }) {
   const categories = [
@@ -12,11 +13,7 @@ export function CategorySelector({ onSelect }: { onSelect: (cat: any) => void })
   return (
     <div className="screen center">
       <header className="category-header">
-        <img
-          src="/epbjc-logo.svg"
-          alt="EPBJC"
-          className="school-logo school-logo--header"
-        />
+        <EpbjcLogo className="school-logo school-logo--header" />
         <h1 className="title">BEM-VINDO À EPBJC</h1>
       </header>
       <div className="grid-buttons grid-buttons--2x2">

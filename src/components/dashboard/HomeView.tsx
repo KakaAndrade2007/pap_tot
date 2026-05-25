@@ -1,47 +1,73 @@
-import { useState, useEffect } from 'react'
-import { Calendar, Receipt } from 'lucide-react'
+import { Calendar, Receipt, Wallet } from 'lucide-react'
 
 interface HomeViewProps {
+  tipoLabel: string
+  nome: string
+  saldo: number
   onNavigate: (view: 'home' | 'calendario' | 'faturas') => void
+  onAdicionarSaldo?: () => void
 }
 
-export function HomeView({ onNavigate }: HomeViewProps) {
-  const [currentPrato, setCurrentPrato] = useState(0)
+const EMENTA_SEMANA = [
+  { dia: 'Segunda', prato: 'Bacalhau à Brás', img: 'https://images.unsplash.com/photo-1626509135521-e941198f395b?q=80&w=400' },
+  { dia: 'Terça', prato: 'Rojões à Minhota', img: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=400' },
+  { dia: 'Quarta', prato: 'Massa de Atum', img: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=400' },
+  { dia: 'Quinta', prato: 'Francesinha', img: 'https://images.unsplash.com/photo-1604908176997-4313979c1f1c?q=80&w=400' },
+  { dia: 'Sexta', prato: 'Arroz de Pato', img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=400' },
+]
 
-  const ementaSemana = [
-    { prato: "Bacalhau à Brás", img: "https://images.unsplash.com/photo-1626509135521-e941198f395b?q=80&w=500", dia: "Segunda" },
-    { prato: "Rojões à Minhota", img: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=500", dia: "Terça" },
-    { prato: "Massa de Atum", img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=500", dia: "Quarta" }
-  ]
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentPrato((prev) => (prev + 1) % ementaSemana.length)
-    }, 4000)
-    return () => clearInterval(timer)
-  }, [])
+export function HomeView({ tipoLabel, nome, saldo, onNavigate, onAdicionarSaldo }: HomeViewProps) {
+  const handleAdicionarSaldo = () => {
+    if (onAdicionarSaldo) {
+      onAdicionarSaldo()
+      return
+    }
+    alert('Adicionar saldo — funcionalidade em breve.')
+  }
 
   return (
-    <div className="dashboard-content">
-      {/* 1. Carrossel de Imagens Automático */}
-      <div className="carrossel-ementa">
-        <img src={ementaSemana[currentPrato].img} alt="Comida" className="img-ementa" />
-        <div className="overlay-ementa">
-          <span>{ementaSemana[currentPrato].dia}</span>
-          <h2>{ementaSemana[currentPrato].prato}</h2>
-        </div>
-      </div>
+    <div className="dashboard-content dashboard-home">
+      <div className="dashboard-home-grid">
+        <aside className="dashboard-col-left">
+          <section className="user-panel-home">
+            <span className="tipo-badge">{tipoLabel}</span>
+            <h2 className="user-panel-nome">{nome}</h2>
+            <div className="user-panel-saldo-row">
+              <span className="saldo-label">Saldo</span>
+              <span className="saldo-badge">{saldo.toFixed(2)}€</span>
+            </div>
+            <button type="button" className="btn-adicionar-saldo" onClick={handleAdicionarSaldo}>
+              <Wallet size={22} />
+              Adicionar saldo
+            </button>
+          </section>
 
-      {/* 2. Grid com os dois botões grandes do Totem */}
-      <div className="grid-acoes-totem">
-        <button className="btn-grande-red" onClick={() => onNavigate('calendario')}>
-          <Calendar size={40} />
-          RESERVAR ALMOÇO
-        </button>
-        <button className="btn-grande-white" onClick={() => onNavigate('faturas')}>
-          <Receipt size={40} />
-          MINHAS FATURAS
-        </button>
+          <div className="acoes-col-left">
+            <button type="button" className="btn-grande-red" onClick={() => onNavigate('calendario')}>
+              <Calendar size={40} />
+              Reservar almoço
+            </button>
+            <button type="button" className="btn-grande-white" onClick={() => onNavigate('faturas')}>
+              <Receipt size={40} />
+              Minhas faturas
+            </button>
+          </div>
+        </aside>
+
+        <section className="dashboard-col-right">
+          <h3 className="ementa-semana-titulo">Ementa da semana</h3>
+          <ul className="ementa-dias-lista">
+            {EMENTA_SEMANA.map((item) => (
+              <li key={item.dia} className="ementa-dia-card">
+                <img src={item.img} alt={item.prato} className="ementa-dia-img" />
+                <div className="ementa-dia-info">
+                  <span className="ementa-dia-nome">{item.dia}</span>
+                  <p className="ementa-dia-prato">{item.prato}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   )
