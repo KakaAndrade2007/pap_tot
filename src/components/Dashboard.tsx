@@ -4,6 +4,7 @@ import { EpbjcLogo } from './EpbjcLogo'
 import { HomeView } from './dashboard/HomeView'
 import { CalendarioView } from './dashboard/CalendarioView'
 import { FaturasView } from './dashboard/FaturasView'
+import { PagamentoView } from './dashboard/PagamentoView'
 
 const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
@@ -12,9 +13,9 @@ const TIPO_LABELS: Record<string, string> = {
   pessoal_predio: 'Pessoal Prédio',
 }
 
-export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }: any) {
+export function Dashboard({ user, reservas, onLogout, onNovaReserva, onAdicionarSaldo, isLoading }: any) {
   const tipoLabel = TIPO_LABELS[user.tipo] ?? user.tipo
-  const [view, setView] = useState<'home' | 'calendario' | 'faturas'>('home')
+  const [view, setView] = useState<'home' | 'calendario' | 'faturas' | 'pagamento'>('home')
   const [dataSelecionada, setDataSelecionada] = useState('')
 
   return (
@@ -40,6 +41,7 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
           tipoLabel={tipoLabel}
           nome={user.nome}
           saldo={user.saldo}
+          user={user}
           onNavigate={setView}
         />
       )}
@@ -60,6 +62,15 @@ export function Dashboard({ user, reservas, onLogout, onNovaReserva, isLoading }
 
       {view === 'faturas' && (
         <FaturasView reservas={reservas} onBack={() => setView('home')} />
+      )}
+
+      {view === 'pagamento' && (
+        <PagamentoView
+          user={user}
+          onBack={() => setView('home')}
+          onConfirmPagamento={onAdicionarSaldo}
+          isLoading={isLoading}
+        />
       )}
     </div>
   )

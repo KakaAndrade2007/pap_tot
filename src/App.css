@@ -384,6 +384,74 @@ body {
   background: #ffe8e8;
 }
 
+.painel-carregar-saldo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 14px;
+  background: #fff;
+  border: 3px solid var(--text);
+  border-radius: 16px;
+  width: 100%;
+}
+
+.painel-carregar-saldo-titulo {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.valores-carregar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.btn-valor-carregar {
+  padding: 12px;
+  border: 3px solid var(--text);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-valor-carregar--ativo {
+  background: var(--text);
+  color: #fff;
+}
+
+.btn-confirmar-carregar {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--text);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-confirmar-carregar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancelar-carregar {
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .acoes-col-left {
   display: flex;
   flex-direction: column;
@@ -921,4 +989,61 @@ body {
   .carrossel-ementa {
     min-height: clamp(180px, 50vh, 400px);
   }
+}
+
+/* 16. PAGAMENTO (Adicionar saldo) */
+.payment-subtitle {
+  margin: 0;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+}
+
+.payment-method-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.payment-method-select {
+  width: 100%;
+  border: 2px solid #eeeeee;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #333;
+  background: #ffffff;
+  outline: none;
+}
+
+.payment-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.payment-card-inner {
+  width: 100%;
+}
+
+.payment-card-element {
+  width: 100%;
+}
+
+/* Feedback simples do Stripe Element (usamos a cor no CardElement style, isto é só reforço visual) */
+.payment-error {
+  margin: 0;
+  color: var(--text);
+  font-weight: 800;
 }

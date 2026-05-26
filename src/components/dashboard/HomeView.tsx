@@ -4,8 +4,8 @@ interface HomeViewProps {
   tipoLabel: string
   nome: string
   saldo: number
-  onNavigate: (view: 'home' | 'calendario' | 'faturas') => void
-  onAdicionarSaldo?: () => void
+  user?: { id?: string }
+  onNavigate: (view: 'home' | 'calendario' | 'faturas' | 'pagamento') => void
 }
 
 const EMENTA_SEMANA = [
@@ -16,14 +16,7 @@ const EMENTA_SEMANA = [
   { dia: 'Sexta', prato: 'Arroz de Pato', img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=400' },
 ]
 
-export function HomeView({ tipoLabel, nome, saldo, onNavigate, onAdicionarSaldo }: HomeViewProps) {
-  const handleAdicionarSaldo = () => {
-    if (onAdicionarSaldo) {
-      onAdicionarSaldo()
-      return
-    }
-    alert('Adicionar saldo — funcionalidade em breve.')
-  }
+export function HomeView({ tipoLabel, nome, saldo, onNavigate }: HomeViewProps) {
 
   return (
     <div className="dashboard-content dashboard-home">
@@ -36,7 +29,7 @@ export function HomeView({ tipoLabel, nome, saldo, onNavigate, onAdicionarSaldo 
               <span className="saldo-label">Saldo</span>
               <span className="saldo-badge">{saldo.toFixed(2)}€</span>
             </div>
-            <button type="button" className="btn-adicionar-saldo" onClick={handleAdicionarSaldo}>
+            <button type="button" className="btn-adicionar-saldo" onClick={() => onNavigate('pagamento')}>
               <Wallet size={22} />
               Adicionar saldo
             </button>

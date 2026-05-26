@@ -114,6 +114,28 @@ export default function App() {
     }
   }
 
+  async function handleAdicionarSaldo(valor: number) {
+    if (!usuarioLogado?.id) return
+    setLoading(true)
+    try {
+      const novoSaldo = Number(usuarioLogado.saldo) + Number(valor)
+      const { error } = await supabase
+        .from('perfis')
+        .update({ saldo: novoSaldo })
+        .eq('id', usuarioLogado.id)
+
+      if (error) throw error
+
+      setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo })
+      alert('Saldo carregado com sucesso!')
+      carregarReservas()
+    } catch (err: any) {
+      alert('Erro ao carregar saldo: ' + (err?.message || 'desconhecido'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function carregarReservas() {
     if (usuarioLogado?.id) {
       const dados = await ReservasService.buscarMinhasReservas(usuarioLogado.id)
@@ -164,6 +186,7 @@ export default function App() {
           reservas={reservas}
           onLogout={resetAll}
           onNovaReserva={handleReserva}
+          onAdicionarSaldo={handleAdicionarSaldo}
           isLoading={loading}
         />
       )}
