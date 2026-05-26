@@ -5,7 +5,7 @@ interface EpbjcLogoProps {
   title?: string
 }
 
-/** Logo EPBJC (monograma geométrico) — cor via `currentColor` (vermelho no totem). */
+/** Logo EPBJC — branco da imagem vira `currentColor` (vermelho); fundo preto transparente. */
 export function EpbjcLogo({ className = '', title = 'EPBJC' }: EpbjcLogoProps) {
   const maskId = `epbjc-logo-mask-${useId().replace(/:/g, '')}`
 
