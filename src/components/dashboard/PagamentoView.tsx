@@ -6,7 +6,7 @@ import { supabase } from '../../services/supabase'
 
 const VALORES_CARREGAMENTO = [5, 10, 20, 50]
 
-type FormaPagamento = 'cartao_credito'
+type FormaPagamento = 'cartao_credito' | 'mbway'
 
 type UserLike = {
   id?: string
@@ -117,6 +117,66 @@ function StripeCheckoutForm({
   )
 }
 
+function MbWayCheckoutForm({
+  valorSelecionado,
+  onConfirmPagamento,
+  onBack,
+}: {
+  valorSelecionado: number
+  onConfirmPagamento: (valor: number) => Promise<void> | void
+  onBack: () => void
+}) {
+  const [processando, setProcessando] = useState(false)
+  const [telemovel, setTelemovel] = useState('')
+
+  async function handleSimularMbWay() {
+    const numeroLimpo = telemovel.replace(/\s+/g, '')
+
+    // Aceita números nacionais (9 dígitos) ou com prefixo +351.
+    const valido = /^(\+351)?9\d{8}$/.test(numeroLimpo)
+    if (!valido) {
+      alert('Insere um número MB WAY válido (ex.: 912345678 ou +351912345678).')
+      return
+    }
+
+    setProcessando(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1200))
+      await onConfirmPagamento(valorSelecionado)
+      alert(`Simulação MB WAY aprovada para ${numeroLimpo}.`)
+      onBack()
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      alert('Erro na simulação MB WAY: ' + (message || 'desconhecido'))
+    } finally {
+      setProcessando(false)
+    }
+  }
+
+  return (
+    <>
+      <input
+        type="tel"
+        inputMode="tel"
+        placeholder="Número MB WAY"
+        className="payment-method-select"
+        value={telemovel}
+        onChange={(e) => setTelemovel(e.target.value)}
+        disabled={processando}
+      />
+
+      <button
+        type="button"
+        className="btn-confirmar-carregar"
+        onClick={handleSimularMbWay}
+        disabled={processando}
+      >
+        {processando ? 'A simular...' : 'Simular pagamento MB WAY'}
+      </button>
+    </>
+  )
+}
+
 export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: PagamentoViewProps) {
   const [valorSelecionado, setValorSelecionado] = useState<number | null>(null)
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>('cartao_credito')
@@ -152,13 +212,24 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
           disabled={isLoading}
         >
           <option value="cartao_credito">Cartão de crédito</option>
+          <option value="mbway">MB WAY (simulação)</option>
         </select>
       </div>
 
       <div className="payment-card-wrapper">
-        <p className="payment-subtitle">Cartão de crédito</p>
+        <p className="payment-subtitle">{formaPagamento === 'cartao_credito' ? 'Cartão de crédito' : 'MB WAY'}</p>
         <div className="payment-card-inner">
-          {stripePromise ? (
+          {formaPagamento === 'mbway' ? (
+            valorSelecionado != null ? (
+              <MbWayCheckoutForm
+                valorSelecionado={valorSelecionado}
+                onConfirmPagamento={onConfirmPagamento}
+                onBack={onBack}
+              />
+            ) : (
+              <p className="payment-error">Seleciona primeiro o valor a carregar.</p>
+            )
+          ) : stripePromise ? (
             <Elements
               stripe={stripePromise}
               options={{
