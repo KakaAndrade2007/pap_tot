@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from './services/supabase'
 import { EmailService } from './services/email'
 import { ReservasService } from './services/reservas'
+import { NoticiasService } from './services/noticias'
+import { EmentasService } from './services/ementas'
 import { AuthService } from './services/auth' // Importando o serviço de hash
 import { SplashScreen } from './components/SplashScreen'
 import { CategorySelector } from './components/CategorySelector'
@@ -17,7 +19,11 @@ export default function App() {
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [reservas, setReservas] = useState<any[]>([])
+  const [noticias, setNoticias] = useState<any[]>([])
+  const [ementas, setEmentas] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingNoticias, setLoadingNoticias] = useState(false)
+  const [loadingEmentas, setLoadingEmentas] = useState(false)
 
   // LOGIN SEGURO COM BCRYPT
   async function handleLogin(user: string, pass: string) {
@@ -143,12 +149,40 @@ export default function App() {
     }
   }
 
+  async function carregarNoticias() {
+    setLoadingNoticias(true)
+    try {
+      const dados = await NoticiasService.buscarNoticias()
+      setNoticias(dados)
+    } catch (err: any) {
+      alert('Erro ao carregar notícias: ' + (err?.message || 'desconhecido'))
+    } finally {
+      setLoadingNoticias(false)
+    }
+  }
+
+  async function carregarEmentas() {
+    setLoadingEmentas(true)
+    try {
+      const dados = await EmentasService.buscarEmentas()
+      setEmentas(dados)
+    } catch (err: any) {
+      alert('Erro ao carregar ementas: ' + (err?.message || 'desconhecido'))
+    } finally {
+      setLoadingEmentas(false)
+    }
+  }
+
   useEffect(() => {
-    if (step === 'home') carregarReservas()
-  }, [step])
+    if (step === 'home' && usuarioLogado?.id) {
+      carregarReservas()
+      carregarNoticias()
+      carregarEmentas()
+    }
+  }, [step, usuarioLogado?.id])
 
   function resetAll() {
-    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]);
+    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]); setNoticias([]); setEmentas([]);
   }
 
   return (
@@ -184,10 +218,14 @@ export default function App() {
         <Dashboard
           user={usuarioLogado}
           reservas={reservas}
+          noticias={noticias}
+          ementas={ementas}
           onLogout={resetAll}
           onNovaReserva={handleReserva}
           onAdicionarSaldo={handleAdicionarSaldo}
           isLoading={loading}
+          isLoadingNoticias={loadingNoticias}
+          isLoadingEmentas={loadingEmentas}
         />
       )}
     </div>

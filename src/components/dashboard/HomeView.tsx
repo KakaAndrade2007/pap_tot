@@ -1,44 +1,32 @@
-import { Calendar, Receipt, Wallet } from 'lucide-react'
+import { Calendar, Newspaper, Receipt, Wallet } from 'lucide-react'
+import { obterDiaEmenta, obterImagemEmenta, obterPratoEmenta } from '../../lib/ementasDisplay'
 
 interface HomeViewProps {
-  tipoLabel: string
-  nome: string
-  saldo: number
-  user?: { id?: string }
-  onNavigate: (view: 'home' | 'calendario' | 'faturas' | 'pagamento') => void
+  ementas: any[]
+  isLoadingEmentas: boolean
+  onNavigate: (view: 'home' | 'calendario' | 'faturas' | 'pagamento' | 'noticias' | 'ementas') => void
 }
 
-const EMENTA_SEMANA = [
-  { dia: 'Segunda', prato: 'Bacalhau à Brás', img: 'https://images.unsplash.com/photo-1626509135521-e941198f395b?q=80&w=400' },
-  { dia: 'Terça', prato: 'Rojões à Minhota', img: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=400' },
-  { dia: 'Quarta', prato: 'Massa de Atum', img: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=400' },
-  { dia: 'Quinta', prato: 'Francesinha', img: 'https://images.unsplash.com/photo-1604908176997-4313979c1f1c?q=80&w=400' },
-  { dia: 'Sexta', prato: 'Arroz de Pato', img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=400' },
-]
-
-export function HomeView({ tipoLabel, nome, saldo, onNavigate }: HomeViewProps) {
+export function HomeView({ ementas, isLoadingEmentas, onNavigate }: HomeViewProps) {
+  const ementasParaLista = Array.isArray(ementas) ? ementas : []
+  const ementasCarousel = ementasParaLista.length > 0 ? [...ementasParaLista, ...ementasParaLista] : []
 
   return (
     <div className="dashboard-content dashboard-home">
       <div className="dashboard-home-grid">
         <aside className="dashboard-col-left">
-          <section className="user-panel-home">
-            <span className="tipo-badge">{tipoLabel}</span>
-            <h2 className="user-panel-nome">{nome}</h2>
-            <div className="user-panel-saldo-row">
-              <span className="saldo-label">Saldo</span>
-              <span className="saldo-badge">{saldo.toFixed(2)}€</span>
-            </div>
-            <button type="button" className="btn-adicionar-saldo" onClick={() => onNavigate('pagamento')}>
+          <div className="acoes-col-left">
+            <button type="button" className="btn-adicionar-saldo btn-adicionar-saldo--home" onClick={() => onNavigate('pagamento')}>
               <Wallet size={22} />
               Adicionar saldo
             </button>
-          </section>
-
-          <div className="acoes-col-left">
             <button type="button" className="btn-grande-red" onClick={() => onNavigate('calendario')}>
               <Calendar size={40} />
               Reservar almoço
+            </button>
+            <button type="button" className="btn-grande-red" onClick={() => onNavigate('noticias')}>
+              <Newspaper size={40} />
+              noticias
             </button>
             <button type="button" className="btn-grande-white" onClick={() => onNavigate('faturas')}>
               <Receipt size={40} />
@@ -48,20 +36,34 @@ export function HomeView({ tipoLabel, nome, saldo, onNavigate }: HomeViewProps) 
         </aside>
 
         <div className="dashboard-col-right-area">
-          <h3 className="ementa-semana-titulo">Ementa da semana</h3>
+          <button type="button" className="ementa-semana-titulo" onClick={() => onNavigate('ementas')}>
+            Ementa da semana
+          </button>
           <section className="dashboard-col-right">
             <div className="ementa-marquee-viewport">
-              <div className="ementa-marquee-track">
-                {[...EMENTA_SEMANA, ...EMENTA_SEMANA].map((item, index) => (
-                  <article key={`${item.dia}-${index}`} className="ementa-dia-card">
-                    <img src={item.img} alt={item.prato} className="ementa-dia-img" />
-                    <div className="ementa-dia-info">
-                      <span className="ementa-dia-nome">{item.dia}</span>
-                      <p className="ementa-dia-prato">{item.prato}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
+              {isLoadingEmentas ? (
+                <p className="sem-faturas">A carregar ementa...</p>
+              ) : ementasParaLista.length === 0 ? (
+                <p className="sem-faturas">Não existem ementas disponíveis.</p>
+              ) : (
+                <div className="ementa-marquee-track">
+                  {ementasCarousel.map((item, index) => {
+                    const dia = obterDiaEmenta(item)
+                    const prato = obterPratoEmenta(item)
+                    const imagem = obterImagemEmenta(item)
+
+                    return (
+                      <article key={`${item?.id ?? prato}-${index}`} className="ementa-dia-card">
+                        {imagem ? <img src={imagem} alt={prato} className="ementa-dia-img" /> : null}
+                        <div className="ementa-dia-info">
+                          {dia ? <span className="ementa-dia-nome">{dia}</span> : null}
+                          <p className="ementa-dia-prato">{prato}</p>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           </section>
         </div>

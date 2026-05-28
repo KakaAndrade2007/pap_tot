@@ -177,16 +177,39 @@ function MbWayCheckoutForm({
   )
 }
 
+function obterValorNumerico(texto: string) {
+  const valor = Number.parseFloat(texto.replace(',', '.').trim())
+  if (Number.isNaN(valor) || valor <= 0) return null
+  return Math.round(valor * 100) / 100
+}
+
 export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: PagamentoViewProps) {
   const [valorSelecionado, setValorSelecionado] = useState<number | null>(null)
+  const [valorPersonalizado, setValorPersonalizado] = useState('')
+  const [usarValorPersonalizado, setUsarValorPersonalizado] = useState(false)
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>('cartao_credito')
 
+  const valorEfetivo = usarValorPersonalizado
+    ? obterValorNumerico(valorPersonalizado)
+    : valorSelecionado
+
+  function selecionarValorFixo(valor: number) {
+    setUsarValorPersonalizado(false)
+    setValorPersonalizado('')
+    setValorSelecionado(valor)
+  }
+
+  function selecionarValorPersonalizado(texto: string) {
+    setUsarValorPersonalizado(true)
+    setValorSelecionado(null)
+    setValorPersonalizado(texto)
+  }
+
   return (
-    <div className="view-container">
+    <div className="view-container view-container--pagamento">
       <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
         <ChevronLeft />
       </button>
-      <h2 className="view-title">Carregar saldo</h2>
 
       <p className="payment-subtitle">Escolhe o valor</p>
       <div className="valores-carregar-grid">
@@ -194,12 +217,37 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
           <button
             key={valor}
             type="button"
-            className={`btn-valor-carregar${valorSelecionado === valor ? ' btn-valor-carregar--ativo' : ''}`}
-            onClick={() => setValorSelecionado(valor)}
+            className={`btn-valor-carregar${!usarValorPersonalizado && valorSelecionado === valor ? ' btn-valor-carregar--ativo' : ''}`}
+            onClick={() => selecionarValorFixo(valor)}
+            disabled={isLoading}
           >
             {valor}€
           </button>
         ))}
+      </div>
+
+      <div className={`valor-personalizado-block${usarValorPersonalizado ? ' valor-personalizado-block--ativo' : ''}`}>
+        <p className="payment-subtitle">Selecionar quantia</p>
+        <div className="valor-personalizado-row">
+          <input
+            type="number"
+            inputMode="decimal"
+            min="1"
+            max="500"
+            step="0.01"
+            placeholder="Ex.: 15"
+            className="valor-personalizado-input"
+            value={valorPersonalizado}
+            onChange={(e) => selecionarValorPersonalizado(e.target.value)}
+            onFocus={() => setUsarValorPersonalizado(true)}
+            disabled={isLoading}
+            aria-label="Quantia personalizada em euros"
+          />
+          <span className="valor-personalizado-simbolo">€</span>
+        </div>
+        {usarValorPersonalizado && valorPersonalizado && valorEfetivo == null ? (
+          <p className="payment-error">Introduz uma quantia válida (mín. 1€).</p>
+        ) : null}
       </div>
 
       <div className="payment-method-block">
@@ -217,12 +265,11 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
       </div>
 
       <div className="payment-card-wrapper">
-        <p className="payment-subtitle">{formaPagamento === 'cartao_credito' ? 'Cartão de crédito' : 'MB WAY'}</p>
         <div className="payment-card-inner">
           {formaPagamento === 'mbway' ? (
-            valorSelecionado != null ? (
+            valorEfetivo != null ? (
               <MbWayCheckoutForm
-                valorSelecionado={valorSelecionado}
+                valorSelecionado={valorEfetivo}
                 onConfirmPagamento={onConfirmPagamento}
                 onBack={onBack}
               />
@@ -243,7 +290,7 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
                     disableLink: true,
                     style: {
                       base: {
-                        fontSize: '16px',
+                        fontSize: '14px',
                         color: '#333',
                         '::placeholder': { color: '#888' },
                       },
@@ -253,10 +300,10 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
                 />
               </div>
 
-              {valorSelecionado != null && (
+              {valorEfetivo != null && (
                 <StripeCheckoutForm
                   user={user}
-                  valorSelecionado={valorSelecionado}
+                  valorSelecionado={valorEfetivo}
                   formaPagamento={formaPagamento}
                   onConfirmPagamento={onConfirmPagamento}
                   onBack={onBack}
