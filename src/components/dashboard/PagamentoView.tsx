@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js'
 import { stripePromise } from '../../lib/stripe'
+import { mensagemErroEdgeFunction } from '../../services/edgeFunctionError'
 import { supabase } from '../../services/supabase'
 
 const VALORES_CARREGAMENTO = [5, 10, 20, 50]
@@ -53,26 +54,22 @@ function StripeCheckoutForm({
       return
     }
 
+    if (!user?.id) {
+      alert('Sessão inválida. Faz logout e entra outra vez antes de pagar.')
+      return
+    }
+
     setProcessando(true)
     try {
-      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
       const { data, error } = await supabase.functions.invoke('processar-pagamento', {
         body: {
           valor: valorSelecionado,
-          userId: user?.id || 'user_teste_123',
-        },
-        headers: {
-          Authorization: `Bearer ${anonKey}`,
-          apiKey: anonKey,
+          userId: user.id,
         },
       })
 
-      console.dir(error)
-
       if (error) {
-        const errorMessage = typeof (error as { message?: string }).message === 'string' ? (error as { message?: string }).message : null
-        throw new Error(errorMessage ?? 'Falha ao comunicar com a function.')
+        throw new Error(await mensagemErroEdgeFunction(error))
       }
 
       const clientSecret = data?.clientSecret
