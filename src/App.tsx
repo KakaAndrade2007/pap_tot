@@ -73,14 +73,17 @@ export default function App() {
 
       const { error } = await supabase
         .from('perfis')
-        .insert([{
-          nome,
-          identificador: user.toLowerCase().trim(),
-          senha: hashedPass, // Salvando o Hash seguro
-          tipo: category,
-          email: email,
-          saldo: 10.00
-        }]);
+        .upsert(
+          {
+            nome,
+            identificador: user.toLowerCase().trim(),
+            senha: hashedPass, // Salvando o Hash seguro
+            tipo: category,
+            email: email,
+            saldo: 10.00
+          },
+          { onConflict: 'identificador' }
+        );
 
       if (error) throw error;
       alert("Conta criada com segurança! Já podes fazer login.");
