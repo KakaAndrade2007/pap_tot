@@ -1152,6 +1152,17 @@ body {
   border: 2px solid var(--border);
 }
 
+.noticias-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+}
+
 .tab-btn {
   flex: 1;
   background: none;
@@ -1508,16 +1519,57 @@ body {
   background: #fff;
 }
 
-.payment-method-select {
-  width: 100%;
-  border: 2px solid #eeeeee;
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.payment-method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 12px;
+  border: 3px solid #eeeeee;
   border-radius: 14px;
-  padding: 12px 16px;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #333;
   background: #ffffff;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 800;
+  transition: all 0.2s ease;
   outline: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payment-method-btn:hover {
+  border-color: #ddd;
+  background: #fafafa;
+}
+
+.payment-method-btn--ativo {
+  border-color: var(--text);
+  background: #fff8f8;
+  color: var(--text);
+}
+
+.payment-method-btn--ativo svg {
+  color: var(--text);
+}
+
+.payment-method-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.payment-method-label {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .payment-card-wrapper {

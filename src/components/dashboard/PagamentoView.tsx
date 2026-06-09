@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, CreditCard, Smartphone } from 'lucide-react'
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js'
 import { stripePromise } from '../../lib/stripe'
 import { mensagemErroEdgeFunction } from '../../services/edgeFunctionError'
@@ -250,15 +250,29 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
       <div className="payment-method-block">
         <p className="payment-subtitle">Forma de pagamento</p>
 
-        <select
-          className="payment-method-select"
-          value={formaPagamento}
-          onChange={(e) => setFormaPagamento(e.target.value as FormaPagamento)}
-          disabled={isLoading}
-        >
-          <option value="cartao_credito">Cartão de crédito</option>
-          <option value="mbway">MB WAY (simulação)</option>
-        </select>
+        <div className="payment-methods-grid">
+          <button
+            type="button"
+            className={`payment-method-btn${formaPagamento === 'cartao_credito' ? ' payment-method-btn--ativo' : ''}`}
+            onClick={() => setFormaPagamento('cartao_credito')}
+            disabled={isLoading}
+            aria-label="Pagar com cartão de crédito"
+          >
+            <CreditCard size={32} />
+            <span className="payment-method-label">Visa</span>
+          </button>
+
+          <button
+            type="button"
+            className={`payment-method-btn${formaPagamento === 'mbway' ? ' payment-method-btn--ativo' : ''}`}
+            onClick={() => setFormaPagamento('mbway')}
+            disabled={isLoading}
+            aria-label="Pagar com MB WAY"
+          >
+            <Smartphone size={32} />
+            <span className="payment-method-label">MB WAY</span>
+          </button>
+        </div>
       </div>
 
       <div className="payment-card-wrapper">

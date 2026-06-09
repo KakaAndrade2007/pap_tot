@@ -16,6 +16,14 @@ function formatarData(valor: string | undefined) {
 
 export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps) {
   const [selectedNoticia, setSelectedNoticia] = useState<any | null>(null)
+  const [subViewNoticias, setSubViewNoticias] = useState<'todos' | 'fofoca' | 'podcast' | 'avisos'>('todos')
+
+  const noticiasFiltradas = subViewNoticias === 'todos'
+    ? noticias
+    : noticias.filter((n: any) => {
+        const tipo = (n?.tipo || n?.categoria || n?.type || '').toLowerCase()
+        return tipo === subViewNoticias
+      })
 
   // Get image URL if available
   const getImagemUrl = (noticia: any) => {
@@ -28,13 +36,40 @@ export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps)
         <ChevronLeft />
       </button>
 
+      <div className="noticias-tabs">
+        <button
+          className={`tab-btn ${subViewNoticias === 'todos' ? 'tab-active' : ''}`}
+          onClick={() => setSubViewNoticias('todos')}
+        >
+          Todos
+        </button>
+        <button
+          className={`tab-btn ${subViewNoticias === 'fofoca' ? 'tab-active' : ''}`}
+          onClick={() => setSubViewNoticias('fofoca')}
+        >
+          Fofoca
+        </button>
+        <button
+          className={`tab-btn ${subViewNoticias === 'podcast' ? 'tab-active' : ''}`}
+          onClick={() => setSubViewNoticias('podcast')}
+        >
+          Podcast
+        </button>
+        <button
+          className={`tab-btn ${subViewNoticias === 'avisos' ? 'tab-active' : ''}`}
+          onClick={() => setSubViewNoticias('avisos')}
+        >
+          Avisos
+        </button>
+      </div>
+
       {isLoading ? (
         <p className="sem-faturas">A carregar notícias...</p>
-      ) : noticias.length === 0 ? (
+      ) : noticiasFiltradas.length === 0 ? (
         <p className="sem-faturas">Não existem notícias disponíveis.</p>
       ) : (
         <div className="noticias-scroll">
-          {noticias.map((noticia: any) => {
+          {noticiasFiltradas.map((noticia: any) => {
             const titulo = noticia?.titulo || noticia?.title || 'Notícia'
             const resumo = noticia?.resumo || noticia?.descricao || noticia?.conteudo || noticia?.content || ''
             const data = formatarData(noticia?.data_publicacao || noticia?.created_at)
@@ -42,8 +77,8 @@ export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps)
             const imagemUrl = getImagemUrl(noticia)
 
             return (
-              <article 
-                key={noticia?.id ?? `${titulo}-${data}`} 
+              <article
+                key={noticia?.id ?? `${titulo}-${data}`}
                 className="noticia-card"
                 onClick={() => setSelectedNoticia(noticia)}
                 style={{ cursor: 'pointer' }}
@@ -57,10 +92,10 @@ export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps)
                 </div>
                 {imagemUrl && (
                   <div className="noticia-card-imagem-container" style={{ width: '100%', maxHeight: '180px', overflow: 'hidden', borderRadius: '12px', margin: '8px 0' }}>
-                    <img 
-                      src={imagemUrl} 
-                      alt={titulo} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    <img
+                      src={imagemUrl}
+                      alt={titulo}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </div>
                 )}
