@@ -18,16 +18,12 @@ export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps)
   const [selectedNoticia, setSelectedNoticia] = useState<any | null>(null)
   const [subViewNoticias, setSubViewNoticias] = useState<'todos' | 'fofoca' | 'podcast' | 'avisos'>('todos')
 
-const noticiasFiltradas = subViewNoticias === 'todos'
-  ? noticias
-  : noticias.filter((n: any) => {
-      const tipo = (n?.tipo || n?.categoria || n?.type || '').toLowerCase()
-      if (subViewNoticias === 'avisos') {
-        // Treat any type that contains "aviso" as an aviso
-        return tipo.includes('aviso')
-      }
-      return tipo === subViewNoticias
-    })
+  const noticiasFiltradas = subViewNoticias === 'todos'
+    ? noticias
+    : noticias.filter((n: any) => {
+        const tipo = (n?.tipo || n?.categoria || n?.type || '').toLowerCase()
+        return tipo === subViewNoticias
+      })
 
   // Get image URL if available
   const getImagemUrl = (noticia: any) => {
