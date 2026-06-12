@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { User, Lock, UserPlus, Mail, ArrowLeft } from 'lucide-react'
+import { User, Lock, UserPlus, ArrowLeft } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
 
 interface RegisterProps {
   category: string;
-  onRegister: (nome: string, user: string, pass: string, email: string) => void;
+  onRegister: (nome: string, user: string, pass: string) => void;
   onBack: () => void;
   isLoading: boolean;
 }
@@ -13,11 +13,10 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
   const [nome, setNome] = useState('')
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
-  const [email, setEmail] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onRegister(nome, user, pass, email)
+    onRegister(nome, user, pass)
   }
 
   return (
@@ -33,51 +32,40 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="input-group">
           <UserPlus size={20} />
-          <input 
+          <input
             type="text"
-            placeholder="Nome Completo" 
+            placeholder="Nome Completo"
             value={nome}
-            onChange={e => setNome(e.target.value)} 
-            required 
-          />
-        </div>
-
-        <div className="input-group">
-          <Mail size={20} />
-          <input 
-            type="email" 
-            placeholder="E-mail (para faturas)" 
-            value={email}
-            onChange={e => setEmail(e.target.value)} 
-            required 
+            onChange={e => setNome(e.target.value)}
+            required
           />
         </div>
 
         <div className="input-group">
           <User size={20} />
-          <input 
+          <input
             type="text"
-            placeholder="Nome de Utilizador" 
+            placeholder="Nome de Utilizador"
             value={user}
-            onChange={e => setUser(e.target.value)} 
-            required 
+            onChange={e => setUser(e.target.value)}
+            required
           />
         </div>
 
         <div className="input-group">
           <Lock size={20} />
-          <input 
-            type="password" 
-            placeholder="Palavra-passe" 
+          <input
+            type="password"
+            placeholder="Palavra-passe"
             value={pass}
-            onChange={e => setPass(e.target.value)} 
-            required 
+            onChange={e => setPass(e.target.value)}
+            required
           />
         </div>
 
-        <button 
-          type="submit" 
-          className="btn-auth" 
+        <button
+          type="submit"
+          className="btn-auth"
           disabled={isLoading}
         >
           {isLoading ? 'A REGISTAR...' : 'CRIAR CONTA'}

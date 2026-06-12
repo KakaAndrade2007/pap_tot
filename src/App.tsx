@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './services/supabase'
-import { EmailService } from './services/email'
+import { supabase, supabaseConfigured } from './services/supabase'
 import { ReservasService } from './services/reservas'
 import { NoticiasService } from './services/noticias'
 import { EmentasService } from './services/ementas'
@@ -46,12 +45,11 @@ export default function App() {
       const senhaValida = await AuthService.comparePassword(pass, perfil.senha)
 
       if (senhaValida) {
-        setUsuarioLogado({ 
-          id: perfil.id, 
-          nome: perfil.nome, 
-          saldo: Number(perfil.saldo), 
+        setUsuarioLogado({
+          id: perfil.id,
+          nome: perfil.nome,
+          saldo: Number(perfil.saldo),
           tipo: perfil.tipo,
-          email: perfil.email // Importante para o EmailService funcionar depois
         })
         setStep('home')
       } else {
@@ -65,10 +63,9 @@ export default function App() {
   }
 
   // REGISTO SEGURO COM BCRYPT
-  async function handleRegister(nome: string, user: string, pass: string, email: string) {
+  async function handleRegister(nome: string, user: string, pass: string) {
     setLoading(true);
     try {
-      // ENCRIPTAR A SENHA ANTES DE SALVAR
       const hashedPass = await AuthService.hashPassword(pass);
 
       const { error } = await supabase
@@ -77,9 +74,8 @@ export default function App() {
           {
             nome,
             identificador: user.toLowerCase().trim(),
-            senha: hashedPass, // Salvando o Hash seguro
+            senha: hashedPass,
             tipo: category,
-            email: email,
             saldo: 10.00
           },
           { onConflict: 'identificador' }
@@ -106,15 +102,7 @@ export default function App() {
       );
 
       setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo });
-      alert("Reserva confirmada! A enviar fatura...");
-
-      // Envio de email com os dados do utilizador logado
-      EmailService.enviarFatura(
-        usuarioLogado.nome,
-        usuarioLogado.email,
-        data
-      ).catch(err => console.error("Email falhou:", err));
-
+      alert("Reserva confirmada!");
       carregarReservas();
     } catch (err: any) {
       alert(err.message);
@@ -186,6 +174,24 @@ export default function App() {
 
   function resetAll() {
     setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]); setNoticias([]); setEmentas([]);
+  }
+
+  if (!supabaseConfigured) {
+    return (
+      <div className="totem-container" style={{ alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+        <h2 style={{ color: '#f40808', textAlign: 'center', margin: 0 }}>Configuração em falta</h2>
+        <p style={{ textAlign: 'center', color: '#555', maxWidth: 480, margin: 0 }}>
+          Cria um ficheiro <strong>.env</strong> na raiz do projeto com as tuas credenciais do Supabase:
+        </p>
+        <pre style={{ background: '#f9f9f9', border: '2px solid #eee', borderRadius: 12, padding: '16px 24px', fontSize: 14, color: '#333', margin: 0 }}>
+{`VITE_SUPABASE_URL=https://xxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGci...`}
+        </pre>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: 14, margin: 0 }}>
+          Encontra estes valores em <strong>Project Settings → API</strong> no painel do Supabase.
+        </p>
+      </div>
+    )
   }
 
   return (
