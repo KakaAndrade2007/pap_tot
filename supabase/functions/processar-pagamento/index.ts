@@ -1,20 +1,20 @@
+// @ts-nocheck — ficheiro Deno; os tipos de URL imports não existem no compilador Node.js
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import Stripe from "https://esm.sh/stripe@12.0.0?target=deno"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
   apiVersion: '2022-11-15',
   httpClient: Stripe.createFetchHttpClient(),
 });
 
-// 1. Criamos os cabeçalhos de CORS para permitir que o teu Totem (React) consiga falar com a API
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-serve(async (req) => {
-  // 2. Responde imediatamente aos pedidos de verificação (OPTIONS) do navegador
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -29,7 +29,25 @@ serve(async (req) => {
       )
     }
 
-    // Criar o Payment Intent no Stripe (o valor vem em cêntimos, ex: 10€ = 1000)
+    // Usa service role key para contornar o RLS ao consultar a tabela perfis
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
+
+    const { data: perfil, error: perfilError } = await supabaseAdmin
+      .from('perfis')
+      .select('id, saldo')
+      .eq('id', userId)
+      .single()
+
+    if (perfilError || !perfil) {
+      return new Response(
+        JSON.stringify({ error: "Aluno não encontrado na base de dados." }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      )
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(valor * 100),
       currency: 'eur',
