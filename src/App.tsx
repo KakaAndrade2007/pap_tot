@@ -32,7 +32,7 @@ export default function App() {
       const { data: perfil, error } = await supabase
         .from('perfis')
         .select('*')
-        .eq('identificador', user.toLowerCase().trim())
+        .eq('identificador', user.trim())
         .eq('tipo', category)
         .single()
 
@@ -66,20 +66,30 @@ export default function App() {
   async function handleRegister(nome: string, user: string, pass: string) {
     setLoading(true);
     try {
+      const identificador = user.trim();
+
+      const { data: existente } = await supabase
+        .from('perfis')
+        .select('id')
+        .eq('identificador', identificador)
+        .maybeSingle();
+
+      if (existente) {
+        alert("Este identificador já está em uso. Escolhe outro.");
+        return;
+      }
+
       const hashedPass = await AuthService.hashPassword(pass);
 
       const { error } = await supabase
         .from('perfis')
-        .upsert(
-          {
-            nome,
-            identificador: user.toLowerCase().trim(),
-            senha: hashedPass,
-            tipo: category,
-            saldo: 10.00
-          },
-          { onConflict: 'identificador' }
-        );
+        .insert({
+          nome,
+          identificador,
+          senha: hashedPass,
+          tipo: category,
+          saldo: 10.00
+        });
 
       if (error) throw error;
       alert("Conta criada com segurança! Já podes fazer login.");

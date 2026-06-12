@@ -16,7 +16,7 @@ function formatarData(valor: string | undefined) {
 
 export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps) {
   const [selectedNoticia, setSelectedNoticia] = useState<any | null>(null)
-  const [subViewNoticias, setSubViewNoticias] = useState<'todos' | 'fofoca' | 'podcast' | 'avisos'>('todos')
+  const [subViewNoticias, setSubViewNoticias] = useState<'todos' | 'fofoca' | 'podcast' | 'aviso'>('todos')
 
   const noticiasFiltradas = subViewNoticias === 'todos'
     ? noticias
@@ -56,8 +56,8 @@ export function NoticiasView({ noticias, onBack, isLoading }: NoticiasViewProps)
           Podcast
         </button>
         <button
-          className={`tab-btn ${subViewNoticias === 'avisos' ? 'tab-active' : ''}`}
-          onClick={() => setSubViewNoticias('avisos')}
+          className={`tab-btn ${subViewNoticias === 'aviso' ? 'tab-active' : ''}`}
+          onClick={() => setSubViewNoticias('aviso')}
         >
           Avisos
         </button>
