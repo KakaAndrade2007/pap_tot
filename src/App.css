@@ -65,9 +65,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: clamp(16px, 3vh, 40px);
-  padding: clamp(24px, 4vw, 56px);
+  justify-content: space-evenly;
+  gap: 0;
+  padding: clamp(40px, 6vw, 80px);
   border: none;
   background: #ffffff;
   cursor: pointer;
@@ -88,13 +88,22 @@ body {
 }
 
 .school-logo--splash {
-  width: clamp(140px, 22vw, 240px);
-  height: clamp(140px, 22vw, 240px);
+  width: clamp(200px, 32vw, 380px);
+  height: clamp(200px, 32vw, 380px);
 }
 
 .school-logo--header {
-  width: clamp(56px, 9vw, 88px);
-  height: clamp(56px, 9vw, 88px);
+  width: clamp(46px, 7vw, 68px);
+  height: clamp(46px, 7vw, 68px);
+}
+
+.totem-header .school-logo--header {
+  align-self: flex-start;
+}
+
+.category-header .school-logo--header {
+  width: clamp(80px, 13vw, 120px);
+  height: clamp(80px, 13vw, 120px);
 }
 
 .school-logo--auth {
@@ -106,7 +115,7 @@ body {
 
 .splash-school-name {
   margin: 0;
-  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-size: clamp(2.4rem, 5.5vw, 4.8rem);
   font-weight: 900;
   color: var(--text);
   line-height: 1.2;
@@ -116,14 +125,14 @@ body {
 
 .splash-school-name span {
   display: block;
-  font-size: clamp(1.2rem, 2.8vw, 2rem);
+  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
   margin-top: 0.35em;
   color: #333;
 }
 
 .splash-tagline {
   margin: 0;
-  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
   font-weight: 700;
   color: #666;
   text-transform: uppercase;
@@ -131,8 +140,8 @@ body {
 }
 
 .splash-cta {
-  margin: clamp(12px, 4vh, 48px) 0 0;
-  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  margin: 0;
+  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
   font-weight: 900;
   color: var(--text);
   text-transform: uppercase;
@@ -655,10 +664,10 @@ body {
 
 .totem-header--home {
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   border-bottom: 2px solid var(--border);
-  margin-bottom: clamp(12px, 1.8vh, 20px);
-  padding-bottom: clamp(12px, 2vh, 20px);
+  margin-bottom: clamp(6px, 1vh, 12px);
+  padding-bottom: clamp(5px, 0.8vh, 10px);
 }
 
 .totem-header-start {
@@ -777,7 +786,7 @@ body {
   border: none !important;
   box-shadow: none !important;
   color: var(--text) !important;
-  padding: 10px !important;
+  padding: 3px !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -791,13 +800,13 @@ body {
 }
 
 .back-btn svg, .logout-btn svg, .back-view-btn svg {
-  width: 40px !important;
-  height: 40px !important;
+  width: 22px !important;
+  height: 22px !important;
   stroke-width: 2.5px;
 }
 
 .back-btn {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   align-self: flex-start;
 }
 
@@ -809,10 +818,10 @@ body {
 .totem-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: clamp(16px, 2.5vh, 28px);
+  align-items: flex-start;
+  margin-bottom: clamp(5px, 0.8vh, 10px);
   border-bottom: 2px solid var(--border);
-  padding-bottom: clamp(12px, 2vh, 20px);
+  padding-bottom: clamp(4px, 0.7vh, 8px);
   flex-shrink: 0;
 }
 
@@ -855,7 +864,7 @@ body {
 
 .header-view-title {
   margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-size: clamp(0.95rem, 1.6vw, 1.4rem);
   font-weight: 900;
   color: var(--text);
   text-transform: uppercase;
@@ -1003,10 +1012,10 @@ body {
 
 
 .view-title {
-  font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
   flex-shrink: 0;
   font-weight: 900;
-  margin: 0 0 25px 0;
+  margin: 0 0 12px 0;
   color: var(--text);
   text-transform: uppercase;
 }
@@ -1182,9 +1191,11 @@ body {
 .faturas-scroll {
   display: grid;
   gap: 15px;
-  max-height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 5px;
+  align-content: start;
 }
 
 .fatura-card {
@@ -1223,9 +1234,11 @@ body {
 .noticias-scroll {
   display: grid;
   gap: 14px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 6px;
-  max-height: 430px;
+  align-content: start;
 }
 
 .noticia-card {
