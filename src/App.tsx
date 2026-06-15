@@ -18,6 +18,7 @@ export default function App() {
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
   const [reservas, setReservas] = useState<any[]>([])
+  const [historico, setHistorico] = useState<any[]>([])
   const [noticias, setNoticias] = useState<any[]>([])
   const [ementas, setEmentas] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -50,6 +51,7 @@ export default function App() {
           nome: perfil.nome,
           saldo: Number(perfil.saldo),
           tipo: perfil.tipo,
+          identificador: perfil.identificador,
         })
         setStep('home')
       } else {
@@ -101,14 +103,15 @@ export default function App() {
     }
   }
 
-  async function handleReserva(data: string) {
+  async function handleReserva(data: string, tipoOpcao: string) {
     if (!usuarioLogado || !data) return;
     setLoading(true);
     try {
       const novoSaldo = await ReservasService.criarReserva(
         usuarioLogado.id,
         data,
-        usuarioLogado.saldo
+        usuarioLogado.saldo,
+        tipoOpcao
       );
 
       setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo });
@@ -174,16 +177,27 @@ export default function App() {
     }
   }
 
+  async function carregarHistorico() {
+    if (!usuarioLogado?.identificador) return
+    try {
+      const dados = await ReservasService.buscarHistoricoAlmocos(usuarioLogado.identificador)
+      setHistorico(dados)
+    } catch {
+      // silencioso — não bloqueia o resto da app
+    }
+  }
+
   useEffect(() => {
     if (step === 'home' && usuarioLogado?.id) {
       carregarReservas()
       carregarNoticias()
       carregarEmentas()
+      carregarHistorico()
     }
   }, [step, usuarioLogado?.id])
 
   function resetAll() {
-    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]); setNoticias([]); setEmentas([]);
+    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]); setHistorico([]); setNoticias([]); setEmentas([]);
   }
 
   if (!supabaseConfigured) {
@@ -237,6 +251,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGci...`}
         <Dashboard
           user={usuarioLogado}
           reservas={reservas}
+          historico={historico}
           noticias={noticias}
           ementas={ementas}
           onLogout={resetAll}

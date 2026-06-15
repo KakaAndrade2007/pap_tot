@@ -1483,6 +1483,92 @@ body {
   padding: clamp(24px, 5vh, 64px) 0;
 }
 
+/* HISTÓRICO DE RESERVAS */
+.historico-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 16px);
+  padding-right: 4px;
+}
+
+.historico-card {
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease;
+}
+
+.historico-card:hover {
+  border-color: var(--text);
+}
+
+.historico-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(10px, 1.4vh, 14px) clamp(14px, 2vw, 20px);
+  background: var(--text);
+  color: #fff;
+}
+
+.historico-prato {
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.historico-valor {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 900;
+}
+
+.historico-card-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.historico-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(8px, 1.2vh, 12px) clamp(14px, 2vw, 20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.historico-linha:last-child {
+  border-bottom: none;
+}
+
+.historico-label {
+  font-size: clamp(0.78rem, 1.2vw, 0.9rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+}
+
+.historico-valor-texto {
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-weight: 700;
+  color: #333;
+  text-align: right;
+}
+
+.historico-pin {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* 14. TOGGLE REGISTO / LOGIN */
 .btn-toggle {
   text-align: center;
@@ -1637,17 +1723,26 @@ body {
 
 .ementa-opcao-item {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(12px, 2vw, 20px);
   background: #fff;
   border: 3px solid var(--border);
   border-radius: 20px;
-  padding: clamp(16px, 2.5vh, 24px) clamp(20px, 3vw, 28px);
+  padding: clamp(14px, 2vh, 20px) clamp(16px, 2.5vw, 24px);
   transition: border-color 0.15s ease;
 }
 
 .ementa-opcao-item:hover {
   border-color: var(--text);
+}
+
+.ementa-opcao-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .ementa-opcao-tipo {
@@ -1659,8 +1754,48 @@ body {
 }
 
 .ementa-opcao-desc {
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
   font-weight: 900;
   color: #111;
   line-height: 1.25;
+}
+
+.btn-comprar-opcao {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: clamp(72px, 10vw, 96px);
+  padding: clamp(10px, 1.4vh, 14px) clamp(12px, 1.8vw, 18px);
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-comprar-opcao:active {
+  transform: scale(0.95);
+  background: var(--accent-strong);
+}
+
+.btn-comprar-opcao:disabled {
+  background: #fca5a5;
+  cursor: not-allowed;
+}
+
+.btn-comprar-opcao-label {
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.btn-comprar-opcao-preco {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 900;
+  line-height: 1;
 }

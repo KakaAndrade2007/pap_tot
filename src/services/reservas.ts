@@ -1,18 +1,17 @@
 import { supabase } from './supabase'
 
 export const ReservasService = {
-  async criarReserva(perfilId: string, data: string, saldoAtual: number) {
-    const custo = 2.50; // Preço do almoço
-    
+  async criarReserva(perfilId: string, data: string, saldoAtual: number, tipoOpcao: string) {
+    const custo = 2.50;
+
     if (saldoAtual < custo) throw new Error("Saldo insuficiente!");
 
-    // 1. Tenta inserir a reserva (tipo_refeicao agora é fixo)
     const { error: resError } = await supabase
       .from('reservas')
-      .insert([{ 
-        perfil_id: perfilId, 
-        data_reserva: data, 
-        tipo_refeicao: 'almoço' 
+      .insert([{
+        perfil_id: perfilId,
+        data_reserva: data,
+        tipo_refeicao: tipoOpcao
       }]);
 
     if (resError) {
@@ -41,5 +40,16 @@ export const ReservasService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async buscarHistoricoAlmocos(identificador: string) {
+    const { data, error } = await supabase
+      .from('historico_almocos')
+      .select('prato, data_refeicao, valor, pin, comprado_em')
+      .eq('identificador', identificador)
+      .order('comprado_em', { ascending: false });
+
+    if (error) throw error;
+    return data ?? [];
   }
 }

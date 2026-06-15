@@ -36,6 +36,7 @@ function encontrarEmentaParaData(ementas: any[], iso: string): any | null {
 export function Dashboard({
   user,
   reservas,
+  historico,
   noticias,
   ementas,
   onLogout,
@@ -57,8 +58,8 @@ export function Dashboard({
     setView('ementa-dia')
   }
 
-  function handleConfirmarReserva() {
-    onNovaReserva(dataSelecionada)
+  function handleConfirmarReserva(tipo: string) {
+    onNovaReserva(dataSelecionada, tipo)
     setView('home')
     setDataSelecionada('')
   }
@@ -68,7 +69,7 @@ export function Dashboard({
     calendario: 'Reservar almoço',
     'ementa-dia': 'Reservar almoço',
     ementas: 'Ementas',
-    faturas: 'Faturas',
+    faturas: 'Histórico de Reservas',
     pagamento: 'Carregar saldo',
   }
 
@@ -133,7 +134,7 @@ export function Dashboard({
       )}
 
       {view === 'faturas' && (
-        <FaturasView reservas={reservas} onBack={() => setView('home')} />
+        <FaturasView historico={historico} onBack={() => setView('home')} />
       )}
 
       {view === 'pagamento' && (

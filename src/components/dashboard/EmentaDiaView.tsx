@@ -5,9 +5,11 @@ interface EmentaDiaViewProps {
   ementa: any | null
   dataISO: string
   onBack: () => void
-  onConfirm: () => void
+  onConfirm: (tipo: string) => void
   isLoading: boolean
 }
+
+const CUSTO = 2.50
 
 export function EmentaDiaView({ ementa, dataISO, onBack, onConfirm, isLoading }: EmentaDiaViewProps) {
   const dia = ementa ? obterDiaEmenta(ementa) : ''
@@ -25,6 +27,12 @@ export function EmentaDiaView({ ementa, dataISO, onBack, onConfirm, isLoading }:
   const peixe = (ementa?.peixe ?? '').toString().trim()
   const vegetariano = (ementa?.vegetariano ?? '').toString().trim()
   const temOpcoes = carne || peixe || vegetariano
+
+  const opcoes = [
+    { tipo: 'carne', rotulo: 'Carne', desc: carne },
+    { tipo: 'peixe', rotulo: 'Peixe', desc: peixe },
+    { tipo: 'vegetariano', rotulo: 'Vegetariano', desc: vegetariano },
+  ].filter((o) => o.desc)
 
   return (
     <div className="view-container">
@@ -47,38 +55,32 @@ export function EmentaDiaView({ ementa, dataISO, onBack, onConfirm, isLoading }:
 
           {temOpcoes ? (
             <div className="ementa-opcoes-lista">
-              {carne && (
-                <div className="ementa-opcao-item">
-                  <span className="ementa-opcao-tipo">Carne</span>
-                  <span className="ementa-opcao-desc">{carne}</span>
+              {opcoes.map(({ tipo, rotulo, desc }) => (
+                <div key={tipo} className="ementa-opcao-item">
+                  <div className="ementa-opcao-text">
+                    <span className="ementa-opcao-tipo">{rotulo}</span>
+                    <span className="ementa-opcao-desc">{desc}</span>
+                  </div>
+                  <button
+                    className="btn-comprar-opcao"
+                    disabled={isLoading}
+                    onClick={() => onConfirm(tipo)}
+                  >
+                    {isLoading ? '…' : (
+                      <>
+                        <span className="btn-comprar-opcao-label">Comprar</span>
+                        <span className="btn-comprar-opcao-preco">{CUSTO.toFixed(2)}€</span>
+                      </>
+                    )}
+                  </button>
                 </div>
-              )}
-              {peixe && (
-                <div className="ementa-opcao-item">
-                  <span className="ementa-opcao-tipo">Peixe</span>
-                  <span className="ementa-opcao-desc">{peixe}</span>
-                </div>
-              )}
-              {vegetariano && (
-                <div className="ementa-opcao-item">
-                  <span className="ementa-opcao-tipo">Vegetariano</span>
-                  <span className="ementa-opcao-desc">{vegetariano}</span>
-                </div>
-              )}
+              ))}
             </div>
           ) : (
             <p className="sem-faturas">Sem opções definidas para este dia.</p>
           )}
         </div>
       )}
-
-      <button
-        className="btn-confirmar-reserva"
-        disabled={isLoading}
-        onClick={onConfirm}
-      >
-        {isLoading ? 'A PROCESSAR...' : 'CONFIRMAR RESERVA'}
-      </button>
     </div>
   )
 }
