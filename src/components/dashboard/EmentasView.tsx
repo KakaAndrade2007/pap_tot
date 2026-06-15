@@ -1,4 +1,5 @@
-import { ChevronLeft } from 'lucide-react'
+import { useState } from 'react'
+import { ChevronLeft, X, UtensilsCrossed } from 'lucide-react'
 import {
   formatarDataEmenta,
   obterDiaEmenta,
@@ -13,8 +14,10 @@ interface EmentasViewProps {
 }
 
 export function EmentasView({ ementas, onBack, isLoading }: EmentasViewProps) {
+  const [selectedEmenta, setSelectedEmenta] = useState<any | null>(null)
+
   return (
-    <div className="view-container">
+    <div className="view-container" style={{ position: 'relative' }}>
       <button type="button" className="back-btn" onClick={onBack} aria-label="Voltar">
         <ChevronLeft />
       </button>
@@ -32,9 +35,17 @@ export function EmentasView({ ementas, onBack, isLoading }: EmentasViewProps) {
             const imagem = obterImagemEmenta(item)
 
             return (
-              <article key={item?.id ?? `${dia}-${prato}`} className="noticia-card">
+              <article
+                key={item?.id ?? `${dia}-${prato}`}
+                className="noticia-card"
+                onClick={() => setSelectedEmenta(item)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="noticia-card-topo">
-                  <span>{dia || 'Ementa'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <UtensilsCrossed size={20} />
+                    <span>{dia || 'Ementa'}</span>
+                  </div>
                   {dataExtra ? <span>{dataExtra}</span> : null}
                 </div>
                 <h3 className="ementa-pratos-texto">{prato}</h3>
@@ -42,6 +53,52 @@ export function EmentasView({ ementas, onBack, isLoading }: EmentasViewProps) {
               </article>
             )
           })}
+        </div>
+      )}
+
+      {selectedEmenta && (
+        <div className="noticia-modal-overlay" onClick={() => setSelectedEmenta(null)}>
+          <div className="noticia-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="noticia-modal-close"
+              onClick={() => setSelectedEmenta(null)}
+              aria-label="Fechar"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="noticia-modal-body">
+              {obterImagemEmenta(selectedEmenta) && (
+                <div className="noticia-modal-imagem-container">
+                  <img
+                    src={obterImagemEmenta(selectedEmenta)}
+                    alt={obterDiaEmenta(selectedEmenta) || 'Ementa'}
+                  />
+                </div>
+              )}
+
+              <div className="noticia-modal-info">
+                <div className="noticia-modal-meta">
+                  <span className="noticia-tipo" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <UtensilsCrossed size={14} />
+                    Ementa
+                  </span>
+                  {formatarDataEmenta(selectedEmenta) && (
+                    <span className="noticia-modal-data">{formatarDataEmenta(selectedEmenta)}</span>
+                  )}
+                </div>
+
+                <h2 className="noticia-modal-titulo">
+                  {obterDiaEmenta(selectedEmenta) || 'Ementa'}
+                </h2>
+
+                <div className="noticia-modal-descricao" style={{ whiteSpace: 'pre-line' }}>
+                  {obterPratoEmenta(selectedEmenta)}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
