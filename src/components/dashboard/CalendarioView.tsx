@@ -4,21 +4,11 @@ import { obterDiasReservaveisComEmenta } from '../../lib/ementasDisplay'
 
 interface CalendarioViewProps {
   ementas: any[]
-  dataSelecionada: string
-  setDataSelecionada: (data: string) => void
   onBack: () => void
-  onConfirm: () => void
-  isLoading: boolean
+  onDiaClick: (iso: string) => void
 }
 
-export function CalendarioView({
-  ementas,
-  dataSelecionada,
-  setDataSelecionada,
-  onBack,
-  onConfirm,
-  isLoading,
-}: CalendarioViewProps) {
+export function CalendarioView({ ementas, onBack, onDiaClick }: CalendarioViewProps) {
   const diasReservaveis = useMemo(
     () => obterDiasReservaveisComEmenta(Array.isArray(ementas) ? ementas : []),
     [ementas]
@@ -38,8 +28,8 @@ export function CalendarioView({
             <button
               key={dia.iso}
               type="button"
-              className={`dia-btn ${dataSelecionada === dia.iso ? 'active' : ''}`}
-              onClick={() => setDataSelecionada(dia.iso)}
+              className="dia-btn"
+              onClick={() => onDiaClick(dia.iso)}
               title={dia.rotulo}
             >
               {dia.dia}
@@ -48,14 +38,6 @@ export function CalendarioView({
           ))}
         </div>
       )}
-
-      <button
-        className="btn-confirmar-reserva"
-        disabled={!dataSelecionada || isLoading || diasReservaveis.length === 0}
-        onClick={onConfirm}
-      >
-        {isLoading ? 'A PROCESSAR...' : 'CONFIRMAR RESERVA'}
-      </button>
     </div>
   )
 }

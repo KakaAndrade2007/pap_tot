@@ -3,16 +3,34 @@ import { LogOut } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
 import { HomeView } from './dashboard/HomeView'
 import { CalendarioView } from './dashboard/CalendarioView'
+import { EmentaDiaView } from './dashboard/EmentaDiaView'
 import { FaturasView } from './dashboard/FaturasView'
 import { PagamentoView } from './dashboard/PagamentoView'
 import { NoticiasView } from './dashboard/NoticiasView'
 import { EmentasView } from './dashboard/EmentasView'
+import { parseDataEmentaParaISO } from '../lib/ementasDisplay'
 
 const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
   professor: 'Professor',
   funcionario: 'Funcionário',
   pessoal_predio: 'Pessoal Prédio',
+}
+
+type DashView = 'home' | 'calendario' | 'ementa-dia' | 'faturas' | 'pagamento' | 'noticias' | 'ementas'
+
+function encontrarEmentaParaData(ementas: any[], iso: string): any | null {
+  const hoje = new Date()
+  for (const item of ementas) {
+    if (!item || typeof item !== 'object') continue
+    const textos = [item.data, item.data_ementa, item.dia, item.dia_semana].filter(
+      (v: unknown): v is string => typeof v === 'string' && (v as string).trim().length > 0
+    )
+    for (const texto of textos) {
+      if (parseDataEmentaParaISO(texto, hoje) === iso) return item
+    }
+  }
+  return null
 }
 
 export function Dashboard({
@@ -28,8 +46,31 @@ export function Dashboard({
   isLoadingEmentas,
 }: any) {
   const tipoLabel = TIPO_LABELS[user.tipo] ?? user.tipo
-  const [view, setView] = useState<'home' | 'calendario' | 'faturas' | 'pagamento' | 'noticias' | 'ementas'>('home')
+  const [view, setView] = useState<DashView>('home')
   const [dataSelecionada, setDataSelecionada] = useState('')
+
+  const ementasDia = Array.isArray(ementas) ? ementas : []
+  const ementaParaDia = dataSelecionada ? encontrarEmentaParaData(ementasDia, dataSelecionada) : null
+
+  function handleDiaClick(iso: string) {
+    setDataSelecionada(iso)
+    setView('ementa-dia')
+  }
+
+  function handleConfirmarReserva() {
+    onNovaReserva(dataSelecionada)
+    setView('home')
+    setDataSelecionada('')
+  }
+
+  const VIEW_TITLES: Partial<Record<DashView, string>> = {
+    noticias: 'Notícias',
+    calendario: 'Reservar almoço',
+    'ementa-dia': 'Reservar almoço',
+    ementas: 'Ementas',
+    faturas: 'Faturas',
+    pagamento: 'Carregar saldo',
+  }
 
   return (
     <div className="home-screen">
@@ -49,17 +90,9 @@ export function Dashboard({
             </div>
           )}
         </div>
-        {view === 'noticias' ? (
-          <h2 className="header-view-title">Notícias</h2>
-        ) : view === 'calendario' ? (
-          <h2 className="header-view-title">Reservar almoço</h2>
-        ) : view === 'ementas' ? (
-          <h2 className="header-view-title">Ementas</h2>
-        ) : view === 'faturas' ? (
-          <h2 className="header-view-title">Faturas</h2>
-        ) : view === 'pagamento' ? (
-          <h2 className="header-view-title">Carregar saldo</h2>
-        ) : view !== 'home' && (
+        {VIEW_TITLES[view] ? (
+          <h2 className="header-view-title">{VIEW_TITLES[view]}</h2>
+        ) : view !== 'home' ? (
           <div className="user-info">
             <p className="user-greeting">
               <span className="tipo-badge">{tipoLabel}</span>
@@ -67,7 +100,7 @@ export function Dashboard({
             </p>
             <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
           </div>
-        )}
+        ) : null}
         <button type="button" className="logout-btn" onClick={onLogout} aria-label="Terminar sessão">
           <LogOut />
         </button>
@@ -75,7 +108,7 @@ export function Dashboard({
 
       {view === 'home' && (
         <HomeView
-          ementas={Array.isArray(ementas) ? ementas : []}
+          ementas={ementasDia}
           isLoadingEmentas={Boolean(isLoadingEmentas)}
           onNavigate={setView}
         />
@@ -83,16 +116,19 @@ export function Dashboard({
 
       {view === 'calendario' && (
         <CalendarioView
-          ementas={Array.isArray(ementas) ? ementas : []}
-          dataSelecionada={dataSelecionada}
-          setDataSelecionada={setDataSelecionada}
+          ementas={ementasDia}
           onBack={() => setView('home')}
+          onDiaClick={handleDiaClick}
+        />
+      )}
+
+      {view === 'ementa-dia' && (
+        <EmentaDiaView
+          ementa={ementaParaDia}
+          dataISO={dataSelecionada}
+          onBack={() => setView('calendario')}
+          onConfirm={handleConfirmarReserva}
           isLoading={isLoading}
-          onConfirm={() => {
-            onNovaReserva(dataSelecionada);
-            setView('home');
-            setDataSelecionada('');
-          }}
         />
       )}
 
@@ -119,7 +155,7 @@ export function Dashboard({
 
       {view === 'ementas' && (
         <EmentasView
-          ementas={Array.isArray(ementas) ? ementas : []}
+          ementas={ementasDia}
           onBack={() => setView('home')}
           isLoading={Boolean(isLoadingEmentas)}
         />
