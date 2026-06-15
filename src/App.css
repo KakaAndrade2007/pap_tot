@@ -1494,6 +1494,16 @@ body {
   padding-right: 4px;
 }
 
+.historico-secao-titulo {
+  font-size: clamp(12px, 1.4vh, 14px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  margin: 4px 0 0;
+  padding: 0 2px;
+}
+
 .historico-card {
   background: #fff;
   border: 2px solid var(--border);

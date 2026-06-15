@@ -134,7 +134,7 @@ export function Dashboard({
       )}
 
       {view === 'faturas' && (
-        <FaturasView historico={historico} onBack={() => setView('home')} />
+        <FaturasView historico={historico} reservas={reservas} onBack={() => setView('home')} />
       )}
 
       {view === 'pagamento' && (
