@@ -130,9 +130,9 @@ export function Dashboard({
       </aside>
 
       <div className={`totem-header${view === 'home' ? ' totem-header--home' : ''}`}>
-        <div className="totem-header-start">
-          <EpbjcLogo className="school-logo school-logo--header" />
-          {view === 'home' && (
+        {view === 'home' ? (
+          <div className="totem-header-start">
+            <EpbjcLogo className="school-logo school-logo--header" />
             <div className="user-info user-info--home">
               <div className="user-info-home-main">
                 <strong className="user-info-nome">{user.nome}</strong>
@@ -143,23 +143,14 @@ export function Dashboard({
                 <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
               </div>
             </div>
-          )}
-        </div>
-        {VIEW_TITLES[view] ? (
-          <h2 className="header-view-title">{VIEW_TITLES[view]}</h2>
-        ) : view !== 'home' ? (
-          <div className="user-info">
-            <p className="user-greeting">
-              <span className="tipo-badge">{tipoLabel}</span>
-              <strong>{user.nome}</strong>
-            </p>
-            <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
           </div>
-        ) : null}
-        {view !== 'home' && (
-          <button type="button" className="logout-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
-            <Menu />
-          </button>
+        ) : (
+          <>
+            {VIEW_TITLES[view] && <h2 className="header-view-title">{VIEW_TITLES[view]}</h2>}
+            <button type="button" className="logout-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
+              <Menu />
+            </button>
+          </>
         )}
       </div>
 

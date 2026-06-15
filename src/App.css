@@ -826,27 +826,12 @@ body {
 }
 
 .totem-header:not(.totem-header--home) {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: clamp(8px, 1.5vw, 16px);
-}
-
-.totem-header:not(.totem-header--home) .totem-header-start {
-  flex: unset;
-  justify-self: start;
-  grid-column: 1;
-}
-
-.totem-header:not(.totem-header--home) .header-view-title {
-  grid-column: 2;
-  justify-self: center;
-  text-align: center;
-}
-
-.totem-header:not(.totem-header--home) .logout-btn {
-  grid-column: 3;
-  justify-self: end;
+  padding-bottom: clamp(3px, 0.4vh, 6px);
+  margin-bottom: clamp(3px, 0.5vh, 6px);
 }
 
 .user-info p {
