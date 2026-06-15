@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 
 interface HistoricoItem {
@@ -46,7 +47,13 @@ function formatarData(iso: string) {
 }
 
 export function FaturasView({ historico, reservas, onBack }: FaturasViewProps) {
+  const [filtroReservas, setFiltroReservas] = useState<'proximas' | 'anteriores'>('proximas')
   const temDados = reservas.length > 0 || historico.length > 0
+
+  const hoje = new Date().toISOString().split('T')[0]
+  const reservasProximas = reservas.filter((r) => r.data_reserva >= hoje)
+  const reservasAnteriores = reservas.filter((r) => r.data_reserva < hoje)
+  const reservasFiltradas = filtroReservas === 'proximas' ? reservasProximas : reservasAnteriores
 
   return (
     <div className="view-container">
@@ -61,30 +68,52 @@ export function FaturasView({ historico, reservas, onBack }: FaturasViewProps) {
           {reservas.length > 0 && (
             <>
               <p className="historico-secao-titulo">Reservas</p>
-              {reservas.map((item) => (
-                <div key={item.id} className="historico-card">
-                  <div className="historico-card-topo">
-                    <span className="historico-prato">
-                      {PRATO_LABEL[item.tipo_refeicao] ?? item.tipo_refeicao}
-                    </span>
-                    <span className="historico-valor">2.50€</span>
+              <div className="faturas-tabs" style={{ marginBottom: '16px' }}>
+                <button
+                  type="button"
+                  className={`tab-btn${filtroReservas === 'proximas' ? ' tab-active' : ''}`}
+                  onClick={() => setFiltroReservas('proximas')}
+                >
+                  Próximas
+                </button>
+                <button
+                  type="button"
+                  className={`tab-btn${filtroReservas === 'anteriores' ? ' tab-active' : ''}`}
+                  onClick={() => setFiltroReservas('anteriores')}
+                >
+                  Anteriores
+                </button>
+              </div>
+              {reservasFiltradas.length === 0 ? (
+                <p className="sem-faturas" style={{ marginBottom: '16px' }}>
+                  {filtroReservas === 'proximas' ? 'Sem reservas futuras.' : 'Sem reservas anteriores.'}
+                </p>
+              ) : (
+                reservasFiltradas.map((item) => (
+                  <div key={item.id} className="historico-card">
+                    <div className="historico-card-topo">
+                      <span className="historico-prato">
+                        {PRATO_LABEL[item.tipo_refeicao] ?? item.tipo_refeicao}
+                      </span>
+                      <span className="historico-valor">2.50€</span>
+                    </div>
+                    <div className="historico-card-corpo">
+                      <div className="historico-linha">
+                        <span className="historico-label">Data</span>
+                        <span className="historico-valor-texto">{formatarData(item.data_reserva)}</span>
+                      </div>
+                      <div className="historico-linha">
+                        <span className="historico-label">Reservado em</span>
+                        <span className="historico-valor-texto">{formatarDataHora(item.created_at)}</span>
+                      </div>
+                      <div className="historico-linha">
+                        <span className="historico-label">Estado</span>
+                        <span className="historico-pin">Reservado</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="historico-card-corpo">
-                    <div className="historico-linha">
-                      <span className="historico-label">Data</span>
-                      <span className="historico-valor-texto">{formatarData(item.data_reserva)}</span>
-                    </div>
-                    <div className="historico-linha">
-                      <span className="historico-label">Reservado em</span>
-                      <span className="historico-valor-texto">{formatarDataHora(item.created_at)}</span>
-                    </div>
-                    <div className="historico-linha">
-                      <span className="historico-label">Estado</span>
-                      <span className="historico-pin">Reservado</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </>
           )}
 
