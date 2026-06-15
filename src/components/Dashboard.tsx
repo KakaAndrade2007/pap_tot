@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { LogOut } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
+import { LogOut, Menu, X, Home, Newspaper, UtensilsCrossed, Calendar, Receipt, Wallet } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
 import { HomeView } from './dashboard/HomeView'
 import { CalendarioView } from './dashboard/CalendarioView'
@@ -49,6 +49,12 @@ export function Dashboard({
   const tipoLabel = TIPO_LABELS[user.tipo] ?? user.tipo
   const [view, setView] = useState<DashView>('home')
   const [dataSelecionada, setDataSelecionada] = useState('')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  function navigate(dest: DashView) {
+    setView(dest)
+    setSidebarOpen(false)
+  }
 
   const ementasDia = Array.isArray(ementas) ? ementas : []
   const ementaParaDia = dataSelecionada ? encontrarEmentaParaData(ementasDia, dataSelecionada) : null
@@ -73,8 +79,56 @@ export function Dashboard({
     pagamento: 'Carregar saldo',
   }
 
+  const NAV_ITEMS: { label: string; dest: DashView; icon: ReactNode }[] = [
+    { label: 'Início', dest: 'home', icon: <Home size={22} /> },
+    { label: 'Notícias', dest: 'noticias', icon: <Newspaper size={22} /> },
+    { label: 'Ementas', dest: 'ementas', icon: <UtensilsCrossed size={22} /> },
+    { label: 'Reservar almoço', dest: 'calendario', icon: <Calendar size={22} /> },
+    { label: 'Histórico', dest: 'faturas', icon: <Receipt size={22} /> },
+    { label: 'Carregar saldo', dest: 'pagamento', icon: <Wallet size={22} /> },
+  ]
+
   return (
     <div className="home-screen">
+      {/* Sidebar overlay */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Sidebar drawer */}
+      <aside className={`sidebar-drawer${sidebarOpen ? ' sidebar-drawer--open' : ''}`}>
+        <div className="sidebar-header">
+          <EpbjcLogo className="school-logo school-logo--header" />
+          <div className="sidebar-user">
+            <strong className="sidebar-user-nome">{user.nome}</strong>
+            <span className="tipo-badge">{tipoLabel}</span>
+            <span className="saldo-badge sidebar-saldo">{user.saldo.toFixed(2)}€</span>
+          </div>
+          <button type="button" className="sidebar-close-btn" onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">
+            <X size={26} />
+          </button>
+        </div>
+
+        <nav className="sidebar-nav">
+          {NAV_ITEMS.map(({ label, dest, icon }) => (
+            <button
+              key={dest}
+              type="button"
+              className={`sidebar-nav-item${view === dest ? ' sidebar-nav-item--active' : ''}`}
+              onClick={() => navigate(dest)}
+            >
+              {icon}
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <button type="button" className="sidebar-logout-btn" onClick={onLogout}>
+          <LogOut size={20} />
+          <span>Terminar sessão</span>
+        </button>
+      </aside>
+
       <div className={`totem-header${view === 'home' ? ' totem-header--home' : ''}`}>
         <div className="totem-header-start">
           <EpbjcLogo className="school-logo school-logo--header" />
@@ -102,23 +156,27 @@ export function Dashboard({
             <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
           </div>
         ) : null}
-        <button type="button" className="logout-btn" onClick={onLogout} aria-label="Terminar sessão">
-          <LogOut />
-        </button>
+        {view !== 'home' && (
+          <button type="button" className="logout-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
+            <Menu />
+          </button>
+        )}
       </div>
 
       {view === 'home' && (
         <HomeView
           ementas={ementasDia}
           isLoadingEmentas={Boolean(isLoadingEmentas)}
-          onNavigate={setView}
+          ultimaNoticia={Array.isArray(noticias) && noticias.length > 0 ? noticias[0] : null}
+          onNavigate={navigate}
+          onOpenSidebar={() => setSidebarOpen(true)}
         />
       )}
 
       {view === 'calendario' && (
         <CalendarioView
           ementas={ementasDia}
-          onBack={() => setView('home')}
+          onBack={() => navigate('home')}
           onDiaClick={handleDiaClick}
         />
       )}
@@ -134,13 +192,13 @@ export function Dashboard({
       )}
 
       {view === 'faturas' && (
-        <FaturasView historico={historico} reservas={reservas} onBack={() => setView('home')} />
+        <FaturasView historico={historico} reservas={reservas} onBack={() => navigate('home')} />
       )}
 
       {view === 'pagamento' && (
         <PagamentoView
           user={user}
-          onBack={() => setView('home')}
+          onBack={() => navigate('home')}
           onConfirmPagamento={onAdicionarSaldo}
           isLoading={isLoading}
         />
@@ -149,7 +207,7 @@ export function Dashboard({
       {view === 'noticias' && (
         <NoticiasView
           noticias={Array.isArray(noticias) ? noticias : []}
-          onBack={() => setView('home')}
+          onBack={() => navigate('home')}
           isLoading={Boolean(isLoadingNoticias)}
         />
       )}
@@ -157,7 +215,7 @@ export function Dashboard({
       {view === 'ementas' && (
         <EmentasView
           ementas={ementasDia}
-          onBack={() => setView('home')}
+          onBack={() => navigate('home')}
           isLoading={Boolean(isLoadingEmentas)}
         />
       )}
