@@ -12,6 +12,8 @@ RestartSec=3
 Environment=PORT=9100
 Environment=PRINTER_VID=0x0fe6
 Environment=PRINTER_PID=0x811e
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
 
 [Install]
 WantedBy=multi-user.target

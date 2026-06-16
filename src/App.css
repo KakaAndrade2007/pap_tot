@@ -1794,6 +1794,28 @@ body {
   background: #fafafa;
 }
 
+.pg-btn-teclado-sistema {
+  width: 100%;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: #fff;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  color: #555;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pg-btn-teclado-sistema:active {
+  border-color: var(--text);
+  color: var(--text);
+}
+
 /* Botão confirmar */
 .pg-btn-confirmar {
   display: flex;

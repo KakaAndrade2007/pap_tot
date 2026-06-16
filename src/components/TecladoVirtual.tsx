@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Delete, CornerDownLeft, ArrowBigUp } from 'lucide-react'
 import { useTeclado } from '../contexts/TecladoContext'
+import { digitarTextoSistema, apagarCaractereSistema } from '../services/tecladoSistema'
 
 const LINHA_ACENTOS = ['á', 'é', 'í', 'ó', 'ú', 'ã', 'õ', 'â', 'ê', 'ô', 'ç', 'ü']
 const LINHA_1 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
@@ -14,13 +15,21 @@ export function TecladoVirtual() {
 
   if (!campoAtivo) return null
 
-  const { valor, aoAlterar, tipo } = campoAtivo
+  const { valor, aoAlterar, tipo, modo } = campoAtivo
 
   function inserir(char: string) {
+    if (modo === 'sistema') {
+      digitarTextoSistema(char)
+      return
+    }
     aoAlterar(valor + char)
   }
 
   function apagar() {
+    if (modo === 'sistema') {
+      apagarCaractereSistema()
+      return
+    }
     aoAlterar(valor.slice(0, -1))
   }
 

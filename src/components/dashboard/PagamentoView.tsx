@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { ChevronLeft, Wallet, ArrowRight } from 'lucide-react'
+import { ChevronLeft, Wallet, ArrowRight, Keyboard } from 'lucide-react'
 import visaImg from '../../assets/visa.png'
 import mbwayImg from '../../assets/mbway.png'
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js'
 import { stripePromise } from '../../lib/stripe'
 import { mensagemErroEdgeFunction } from '../../services/edgeFunctionError'
 import { supabase } from '../../services/supabase'
-import { useCampoComTeclado } from '../../contexts/TecladoContext'
+import { useCampoComTeclado, useTeclado } from '../../contexts/TecladoContext'
 
 const VALORES_CARREGAMENTO = [5, 10, 20, 50]
 
@@ -200,6 +200,7 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
   const [usarValorPersonalizado, setUsarValorPersonalizado] = useState(false)
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>('cartao_credito')
   const tecladoValor = useCampoComTeclado(valorPersonalizado, selecionarValorPersonalizado, 'numerico')
+  const { abrirTecladoSistema } = useTeclado()
 
   const valorEfetivo = usarValorPersonalizado
     ? obterValorNumerico(valorPersonalizado)
@@ -329,6 +330,14 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
                 }}
               />
             </div>
+            <button
+              type="button"
+              className="pg-btn-teclado-sistema"
+              onClick={() => abrirTecladoSistema('numerico')}
+            >
+              <Keyboard size={16} />
+              <span>Mostrar teclado</span>
+            </button>
             {valorEfetivo != null && (
               <StripeCheckoutForm
                 user={user}

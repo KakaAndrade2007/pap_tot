@@ -12,6 +12,7 @@ import {
   separador,
 } from './escpos.js'
 import { impressoraDisponivel, enviarParaImpressora } from './usbPrinter.js'
+import { digitarTexto, apagarCaractere } from './tecladoSistema.js'
 
 const PORT = Number(process.env.PORT) || 9100
 
@@ -82,6 +83,25 @@ app.post('/imprimir', async (req, res) => {
   } catch (err) {
     console.error('Erro ao imprimir:', err)
     res.status(500).json({ error: err.message || 'Não foi possível imprimir a fatura.' })
+  }
+})
+
+app.post('/tecla', async (req, res) => {
+  const { acao, texto } = req.body ?? {}
+
+  try {
+    if (acao === 'inserir') {
+      if (!texto) return res.status(400).json({ error: 'Falta o texto a inserir.' })
+      await digitarTexto(texto)
+    } else if (acao === 'apagar') {
+      await apagarCaractere()
+    } else {
+      return res.status(400).json({ error: 'Ação desconhecida (usa "inserir" ou "apagar").' })
+    }
+    res.json({ ok: true })
+  } catch (err) {
+    console.error('Erro ao simular tecla:', err)
+    res.status(500).json({ error: 'Não foi possível simular a tecla.' })
   }
 })
 

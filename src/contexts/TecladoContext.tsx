@@ -6,11 +6,15 @@ interface CampoAtivo {
   valor: string
   aoAlterar: (valor: string) => void
   tipo: TipoTeclado
+  /** 'sistema': campo fora do nosso controlo (ex.: iframe da Stripe) — as teclas são
+   * simuladas a nível do sistema operativo em vez de atualizar o valor diretamente. */
+  modo?: 'sistema'
 }
 
 interface TecladoContextValue {
   campoAtivo: CampoAtivo | null
   registrarCampo: (campo: CampoAtivo) => void
+  abrirTecladoSistema: (tipo: TipoTeclado) => void
   fecharTeclado: () => void
 }
 
@@ -20,10 +24,14 @@ export function TecladoProvider({ children }: { children: ReactNode }) {
   const [campoAtivo, setCampoAtivo] = useState<CampoAtivo | null>(null)
 
   const registrarCampo = useCallback((campo: CampoAtivo) => setCampoAtivo(campo), [])
+  const abrirTecladoSistema = useCallback(
+    (tipo: TipoTeclado) => setCampoAtivo({ valor: '', aoAlterar: () => {}, tipo, modo: 'sistema' }),
+    []
+  )
   const fecharTeclado = useCallback(() => setCampoAtivo(null), [])
 
   return (
-    <TecladoContext.Provider value={{ campoAtivo, registrarCampo, fecharTeclado }}>
+    <TecladoContext.Provider value={{ campoAtivo, registrarCampo, abrirTecladoSistema, fecharTeclado }}>
       {children}
     </TecladoContext.Provider>
   )
