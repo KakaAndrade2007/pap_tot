@@ -1500,6 +1500,45 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.historico-imprimir {
+  padding: clamp(10px, 1.4vh, 14px) clamp(14px, 2vw, 20px);
+  border-top: 1px solid var(--border);
+}
+
+.btn-imprimir-fatura {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: clamp(8px, 1.2vh, 12px);
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-imprimir-fatura:active {
+  transform: scale(0.97);
+  background: var(--accent-strong);
+}
+
+.btn-imprimir-fatura:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+.historico-imprimir-erro {
+  margin: 8px 0 0;
+  font-size: clamp(0.78rem, 1.1vw, 0.88rem);
+  color: #f40808;
+  text-align: center;
+}
+
 /* 14. TOGGLE REGISTO / LOGIN */
 .btn-toggle {
   text-align: center;
@@ -2271,4 +2310,90 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ─── TECLADO VIRTUAL ────────────────────────────────────────────── */
+.teclado-virtual-overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.teclado-virtual {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 900px;
+  background: #1a1a1a;
+  border-radius: 18px 18px 0 0;
+  padding: clamp(10px, 1.4vh, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.teclado-linha {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.teclado-linha--numerica {
+  flex-wrap: wrap;
+}
+
+.teclado-tecla {
+  flex: 1;
+  min-width: clamp(32px, 5vw, 56px);
+  padding: clamp(10px, 1.6vh, 16px) 0;
+  background: #2e2e2e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 700;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+
+.teclado-tecla:active {
+  background: var(--accent-strong);
+  transform: scale(0.95);
+}
+
+.teclado-tecla--especial {
+  flex: 0 0 auto;
+  min-width: clamp(44px, 6vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #404040;
+}
+
+.teclado-tecla--ativa {
+  background: var(--text);
+}
+
+.teclado-tecla--espaco {
+  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.teclado-tecla--concluir {
+  flex: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }

@@ -1,0 +1,6 @@
+# Impressora térmica GOOJPRT PT-210 (chip YICHIP, identifica-se como "POS58 Printer").
+# O driver de kernel usblp não se associa a este chip (probe falha com EIO), por isso
+# o print-server fala diretamente com o dispositivo via libusb (pacote npm "usb"),
+# em vez de escrever em /dev/usb/lp0. Esta regra dá acesso ao utilizador da sessão
+# gráfica (uaccess) e, como rede de segurança, abre o device a todos (MODE 0666).
+SUBSYSTEM=="usb", ATTR{idVendor}=="0fe6", ATTR{idProduct}=="811e", MODE="0666", TAG+="uaccess"

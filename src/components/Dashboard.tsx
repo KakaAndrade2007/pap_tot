@@ -183,7 +183,7 @@ export function Dashboard({
       )}
 
       {view === 'faturas' && (
-        <FaturasView historico={historico} reservas={reservas} onBack={() => navigate('home')} />
+        <FaturasView historico={historico} reservas={reservas} aluno={user.nome} onBack={() => navigate('home')} />
       )}
 
       {view === 'pagamento' && (

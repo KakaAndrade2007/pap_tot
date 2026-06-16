@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Printer } from 'lucide-react'
+import { imprimirFatura } from '../../services/impressora'
 
 interface HistoricoItem {
   prato: string
@@ -19,6 +20,7 @@ interface ReservaItem {
 interface FaturasViewProps {
   historico: HistoricoItem[]
   reservas: ReservaItem[]
+  aluno: string
   onBack: () => void
 }
 
@@ -46,7 +48,40 @@ function formatarData(iso: string) {
   })
 }
 
-export function FaturasView({ historico, reservas, onBack }: FaturasViewProps) {
+function BotaoImprimir({ dados }: { dados: Parameters<typeof imprimirFatura>[0] }) {
+  const [estado, setEstado] = useState<'idle' | 'imprimindo' | 'ok' | 'erro'>('idle')
+  const [erro, setErro] = useState('')
+
+  async function handleClick() {
+    setEstado('imprimindo')
+    setErro('')
+    try {
+      await imprimirFatura(dados)
+      setEstado('ok')
+      setTimeout(() => setEstado('idle'), 2500)
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : 'Erro ao imprimir.')
+      setEstado('erro')
+    }
+  }
+
+  return (
+    <div className="historico-imprimir">
+      <button
+        type="button"
+        className="btn-imprimir-fatura"
+        onClick={handleClick}
+        disabled={estado === 'imprimindo'}
+      >
+        <Printer size={16} />
+        <span>{estado === 'imprimindo' ? 'A imprimir…' : estado === 'ok' ? 'Impresso!' : 'Imprimir fatura'}</span>
+      </button>
+      {estado === 'erro' && <p className="historico-imprimir-erro">{erro}</p>}
+    </div>
+  )
+}
+
+export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewProps) {
   const [filtroReservas, setFiltroReservas] = useState<'proximas' | 'anteriores'>('proximas')
   const temDados = reservas.length > 0 || historico.length > 0
 
@@ -111,6 +146,16 @@ export function FaturasView({ historico, reservas, onBack }: FaturasViewProps) {
                         <span className="historico-pin">Reservado</span>
                       </div>
                     </div>
+                    <BotaoImprimir
+                      dados={{
+                        tipo: 'reserva',
+                        prato: PRATO_LABEL[item.tipo_refeicao] ?? item.tipo_refeicao,
+                        data: formatarData(item.data_reserva),
+                        valor: 2.5,
+                        estado: 'Reservado',
+                        aluno,
+                      }}
+                    />
                   </div>
                 ))
               )}
@@ -142,6 +187,16 @@ export function FaturasView({ historico, reservas, onBack }: FaturasViewProps) {
                       <span className="historico-pin">{item.pin}</span>
                     </div>
                   </div>
+                  <BotaoImprimir
+                    dados={{
+                      tipo: 'consumo',
+                      prato: PRATO_LABEL[item.prato] ?? item.prato,
+                      data: item.data_refeicao,
+                      valor: Number(item.valor),
+                      pin: item.pin,
+                      aluno,
+                    }}
+                  />
                 </div>
               ))}
             </>

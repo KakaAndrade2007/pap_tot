@@ -1,0 +1,15 @@
+[Unit]
+Description=Totem PAP - Web App
+After=network.target
+
+[Service]
+Type=simple
+User=SUBSTITUI_O_TEU_UTILIZADOR
+WorkingDirectory=/home/SUBSTITUI_O_TEU_UTILIZADOR/pap_tot
+ExecStart=/usr/bin/npx vite preview --host 127.0.0.1 --port 4173 --strictPort
+Restart=on-failure
+RestartSec=3
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { User, Lock, UserPlus, ArrowLeft } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
+import { useCampoComTeclado } from '../contexts/TecladoContext'
 
 interface RegisterProps {
   category: string;
@@ -13,6 +14,9 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
   const [nome, setNome] = useState('')
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
+  const tecladoNome = useCampoComTeclado(nome, setNome, 'texto')
+  const tecladoUser = useCampoComTeclado(user, setUser, 'texto')
+  const tecladoPass = useCampoComTeclado(pass, setPass, 'texto')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +42,7 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
             value={nome}
             onChange={e => setNome(e.target.value)}
             required
+            {...tecladoNome}
           />
         </div>
 
@@ -49,6 +54,7 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
             value={user}
             onChange={e => setUser(e.target.value)}
             required
+            {...tecladoUser}
           />
         </div>
 
@@ -60,6 +66,7 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
             value={pass}
             onChange={e => setPass(e.target.value)}
             required
+            {...tecladoPass}
           />
         </div>
 

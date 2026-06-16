@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { User, Lock, ArrowLeft } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
+import { useCampoComTeclado } from '../contexts/TecladoContext'
 
 const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
@@ -21,6 +22,8 @@ export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: 
   const tipoLabel = TIPO_LABELS[category] ?? category
   const [userName, setUserName] = useState('') // mudado para evitar conflito
   const [password, setPassword] = useState('')
+  const tecladoUser = useCampoComTeclado(userName, setUserName, 'texto')
+  const tecladoPass = useCampoComTeclado(password, setPassword, 'texto')
 
   return (
     <div className="auth-box">
@@ -32,20 +35,22 @@ export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: 
       
       <div className="input-group">
         <User />
-        <input 
-          placeholder="Utilizador" 
+        <input
+          placeholder="Utilizador"
           value={userName}
-          onChange={e => setUserName(e.target.value)} 
+          onChange={e => setUserName(e.target.value)}
+          {...tecladoUser}
         />
       </div>
       
       <div className="input-group">
         <Lock />
-        <input 
-          type="password" 
-          placeholder="Senha" 
+        <input
+          type="password"
+          placeholder="Senha"
           value={password}
-          onChange={e => setPassword(e.target.value)} 
+          onChange={e => setPassword(e.target.value)}
+          {...tecladoPass}
         />
       </div>
       

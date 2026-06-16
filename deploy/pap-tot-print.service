@@ -1,0 +1,17 @@
+[Unit]
+Description=Totem PAP - Print Server (GOOJPRT PT-210)
+After=network.target
+
+[Service]
+Type=simple
+User=SUBSTITUI_O_TEU_UTILIZADOR
+WorkingDirectory=/home/SUBSTITUI_O_TEU_UTILIZADOR/pap_tot/print-server
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=3
+Environment=PORT=9100
+Environment=PRINTER_VID=0x0fe6
+Environment=PRINTER_PID=0x811e
+
+[Install]
+WantedBy=multi-user.target

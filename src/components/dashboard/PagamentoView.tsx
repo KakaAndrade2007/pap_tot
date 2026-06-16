@@ -6,6 +6,7 @@ import { CardElement, Elements, useElements, useStripe } from '@stripe/react-str
 import { stripePromise } from '../../lib/stripe'
 import { mensagemErroEdgeFunction } from '../../services/edgeFunctionError'
 import { supabase } from '../../services/supabase'
+import { useCampoComTeclado } from '../../contexts/TecladoContext'
 
 const VALORES_CARREGAMENTO = [5, 10, 20, 50]
 
@@ -132,6 +133,7 @@ function MbWayCheckoutForm({
 }) {
   const [processando, setProcessando] = useState(false)
   const [telemovel, setTelemovel] = useState('')
+  const tecladoTelemovel = useCampoComTeclado(telemovel, setTelemovel, 'numerico')
 
   async function handleSimularMbWay() {
     const numeroLimpo = telemovel.replace(/\s+/g, '')
@@ -165,6 +167,7 @@ function MbWayCheckoutForm({
         value={telemovel}
         onChange={(e) => setTelemovel(e.target.value)}
         disabled={processando}
+        {...tecladoTelemovel}
       />
       <button
         type="button"
@@ -196,6 +199,7 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
   const [valorPersonalizado, setValorPersonalizado] = useState('')
   const [usarValorPersonalizado, setUsarValorPersonalizado] = useState(false)
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamento>('cartao_credito')
+  const tecladoValor = useCampoComTeclado(valorPersonalizado, selecionarValorPersonalizado, 'numerico')
 
   const valorEfetivo = usarValorPersonalizado
     ? obterValorNumerico(valorPersonalizado)
@@ -252,16 +256,14 @@ export function PagamentoView({ user, onBack, onConfirmPagamento, isLoading }: P
         <div className={`pg-input-row${usarValorPersonalizado ? ' pg-input-row--ativo' : ''}`}>
           <span className="pg-input-prefix">€</span>
           <input
-            type="number"
+            type="text"
             inputMode="decimal"
-            min="1"
-            max="500"
-            step="0.01"
             placeholder="Outro valor"
             className="pg-input-custom"
             value={valorPersonalizado}
             onChange={(e) => selecionarValorPersonalizado(e.target.value)}
-            onFocus={() => setUsarValorPersonalizado(true)}
+            onFocus={() => { setUsarValorPersonalizado(true); tecladoValor.onFocus(); }}
+            onBlur={tecladoValor.onBlur}
             disabled={isLoading}
             aria-label="Quantia personalizada em euros"
           />

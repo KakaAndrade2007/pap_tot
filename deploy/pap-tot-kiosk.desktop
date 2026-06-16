@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Totem PAP Kiosk
+Comment=Arranca o Chromium em modo kiosk apontado para a app do totem
+Exec=chromium --ozone-platform=wayland --disable-gpu-compositing --kiosk --noerrdialogs --disable-infobars --incognito --disable-pinch --overscroll-history-navigation=0 --check-for-update-interval=31536000 http://localhost:4173
+X-GNOME-Autostart-enabled=true
