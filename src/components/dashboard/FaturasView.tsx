@@ -85,7 +85,8 @@ export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewP
   const [filtroReservas, setFiltroReservas] = useState<'proximas' | 'anteriores'>('proximas')
   const temDados = reservas.length > 0 || historico.length > 0
 
-  const hoje = new Date().toISOString().split('T')[0]
+  const agora = new Date()
+  const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`
   const reservasProximas = reservas.filter((r) => r.data_reserva >= hoje)
   const reservasAnteriores = reservas.filter((r) => r.data_reserva < hoje)
   const reservasFiltradas = filtroReservas === 'proximas' ? reservasProximas : reservasAnteriores
