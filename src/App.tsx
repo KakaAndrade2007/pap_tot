@@ -52,6 +52,7 @@ export default function App() {
           saldo: Number(perfil.saldo),
           tipo: perfil.tipo,
           identificador: perfil.identificador,
+          email: perfil.email,
         })
         setStep('home')
       } else {
@@ -65,7 +66,7 @@ export default function App() {
   }
 
   // REGISTO SEGURO COM BCRYPT
-  async function handleRegister(nome: string, user: string, pass: string) {
+  async function handleRegister(nome: string, user: string, pass: string, email: string) {
     setLoading(true);
     try {
       const identificador = user.trim();
@@ -89,6 +90,7 @@ export default function App() {
           nome,
           identificador,
           senha: hashedPass,
+          email: email.trim(),
           tipo: category,
           saldo: 10.00
         });
@@ -138,6 +140,11 @@ export default function App() {
 
       setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo })
       alert('Saldo carregado com sucesso!')
+
+      supabase.functions
+        .invoke('notificar-carregamento', { body: { userId: usuarioLogado.id, valor } })
+        .catch((err) => console.error('Notificação de email falhou:', err))
+
       carregarReservas()
     } catch (err: any) {
       alert('Erro ao carregar saldo: ' + (err?.message || 'desconhecido'))

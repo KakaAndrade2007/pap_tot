@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { User, Lock, UserPlus, ArrowLeft } from 'lucide-react'
+import { User, Lock, UserPlus, Mail, ArrowLeft } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
 import { useCampoComTeclado } from '../contexts/TecladoContext'
 
 interface RegisterProps {
   category: string;
-  onRegister: (nome: string, user: string, pass: string) => void;
+  onRegister: (nome: string, user: string, pass: string, email: string) => void;
   onBack: () => void;
   isLoading: boolean;
 }
@@ -14,13 +14,15 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
   const [nome, setNome] = useState('')
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
+  const [email, setEmail] = useState('')
   const tecladoNome = useCampoComTeclado(nome, setNome, 'texto')
   const tecladoUser = useCampoComTeclado(user, setUser, 'texto')
   const tecladoPass = useCampoComTeclado(pass, setPass, 'texto')
+  const tecladoEmail = useCampoComTeclado(email, setEmail, 'texto')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onRegister(nome, user, pass)
+    onRegister(nome, user, pass, email)
   }
 
   return (
@@ -67,6 +69,18 @@ export function Register({ category, onRegister, onBack, isLoading }: RegisterPr
             onChange={e => setPass(e.target.value)}
             required
             {...tecladoPass}
+          />
+        </div>
+
+        <div className="input-group">
+          <Mail size={20} />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            {...tecladoEmail}
           />
         </div>
 
