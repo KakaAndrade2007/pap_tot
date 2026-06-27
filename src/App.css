@@ -1060,23 +1060,23 @@ body {
 
 .faturas-tabs {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 0;
   flex-shrink: 0;
   background: #f9f9f9;
-  padding: 8px;
-  border-radius: 20px;
+  padding: 6px;
+  border-radius: 16px;
   border: 2px solid var(--border);
 }
 
 .noticias-tabs {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 0;
   flex-shrink: 0;
   background: #f9f9f9;
-  padding: 8px;
-  border-radius: 20px;
+  padding: 6px;
+  border-radius: 16px;
   border: 2px solid var(--border);
 }
 
@@ -1084,14 +1084,14 @@ body {
   flex: 1;
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  color: #888888; 
-  padding: 18px 0;
+  color: #888888;
+  padding: 13px 0;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-radius: 14px;
+  border-radius: 11px;
   transition: all 0.25s ease;
 }
 

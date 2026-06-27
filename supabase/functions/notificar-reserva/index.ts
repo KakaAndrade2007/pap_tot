@@ -8,6 +8,14 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+const CUSTO_REFEICAO = 2.5
+
+const PRATO_LABEL: Record<string, string> = {
+  carne: 'Carne',
+  peixe: 'Peixe',
+  vegetariano: 'Vegetariano',
+}
+
 // Logo EPBJC recolorido a verde com fundo transparente (versão para email, gerada a partir de
 // public/epbjc-logo.png) e embutido em base64 — function fica num único ficheiro autossuficiente,
 // sem precisar de ficheiros estáticos à parte para deploy via dashboard.
@@ -19,11 +27,11 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { userId, valor } = await req.json()
+    const { userId, data, tipoOpcao } = await req.json()
 
-    if (!userId || !valor) {
+    if (!userId || !data || !tipoOpcao) {
       return new Response(
-        JSON.stringify({ error: "Falta o userId ou o valor" }),
+        JSON.stringify({ error: "Falta o userId, a data ou o tipoOpcao" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
     }
@@ -64,15 +72,20 @@ serve(async (req: Request) => {
       )
     }
 
-    const agora = new Date()
-    const dia = agora.toLocaleDateString('pt-PT', {
+    const dataRefeicao = new Date(`${data}T12:00:00`).toLocaleDateString('pt-PT', {
       weekday: 'long',
       day: '2-digit',
       month: 'long',
       year: 'numeric',
     })
-    const horario = agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
-    const valorFormatado = Number(valor).toFixed(2)
+    const emitidaEm = new Date().toLocaleString('pt-PT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    const pratoLabel = PRATO_LABEL[tipoOpcao] ?? tipoOpcao
 
     const emailResponse = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -84,34 +97,38 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         sender: { name: 'EPBJC', email: 'klikaaki2007@gmail.com' },
         to: [{ email: perfil.email }],
-        subject: 'Carregamento de saldo confirmado - EPBJC',
+        subject: 'Fatura da tua reserva - EPBJC',
         htmlContent: `
           <div style="font-family: 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e3efd8; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
             <div style="text-align: center; margin-bottom: 24px;">
               <img src="cid:epbjc-logo.png" alt="EPBJC" width="72" height="72" style="display: block; margin: 0 auto 12px auto;" />
-              <h2 style="color: #4b7c1d; margin: 0; font-size: 22px; font-weight: 800;">Saldo carregado com sucesso!</h2>
+              <h2 style="color: #4b7c1d; margin: 0; font-size: 22px; font-weight: 800;">Fatura de reserva</h2>
             </div>
 
             <p style="font-size: 15px; line-height: 1.5; color: #374151;">Olá, <strong>${perfil.nome}</strong>,</p>
-            <p style="font-size: 14px; line-height: 1.5; color: #4b5563;">Confirmamos o carregamento de saldo na tua conta do totem EPBJC.</p>
+            <p style="font-size: 14px; line-height: 1.5; color: #4b5563;">Aqui está o comprovativo da tua reserva no refeitório EPBJC.</p>
 
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
               <tr>
-                <td style="padding: 10px 0; color: #4b5563; border-bottom: 1px solid #f3f4f6;">Dia:</td>
-                <td style="padding: 10px 0; text-align: right; color: #111827; font-weight: 600; border-bottom: 1px solid #f3f4f6;">${dia}</td>
+                <td style="padding: 10px 0; color: #4b5563; border-bottom: 1px solid #f3f4f6;">Refeição:</td>
+                <td style="padding: 10px 0; text-align: right; color: #111827; font-weight: 600; border-bottom: 1px solid #f3f4f6;">${pratoLabel}</td>
               </tr>
               <tr>
-                <td style="padding: 10px 0; color: #4b5563; border-bottom: 1px solid #f3f4f6;">Horário da transação:</td>
-                <td style="padding: 10px 0; text-align: right; color: #111827; font-weight: 600; border-bottom: 1px solid #f3f4f6;">${horario}</td>
+                <td style="padding: 10px 0; color: #4b5563; border-bottom: 1px solid #f3f4f6;">Data da refeição:</td>
+                <td style="padding: 10px 0; text-align: right; color: #111827; font-weight: 600; border-bottom: 1px solid #f3f4f6;">${dataRefeicao}</td>
               </tr>
               <tr>
-                <td style="padding: 14px 0 0 0; color: #1f2937; font-weight: 700;">Valor carregado:</td>
-                <td style="padding: 14px 0 0 0; text-align: right; color: #4b7c1d; font-weight: 800; font-size: 20px;">+${valorFormatado}€</td>
+                <td style="padding: 10px 0; color: #4b5563; border-bottom: 1px solid #f3f4f6;">Fatura emitida em:</td>
+                <td style="padding: 10px 0; text-align: right; color: #111827; font-weight: 600; border-bottom: 1px solid #f3f4f6;">${emitidaEm}</td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 0 0 0; color: #1f2937; font-weight: 700;">Valor pago:</td>
+                <td style="padding: 14px 0 0 0; text-align: right; color: #4b7c1d; font-weight: 800; font-size: 20px;">${CUSTO_REFEICAO.toFixed(2)}€</td>
               </tr>
             </table>
 
             <div style="text-align: center; margin-top: 28px; border-top: 1px solid #e3efd8; padding-top: 16px;">
-              <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.5;">Este é um email automático do totem de autoatendimento EPBJC. Não respondas a esta mensagem.</p>
+              <p style="font-size: 12px; color: #9ca3af; margin: 0; line-height: 1.5;">Este é um documento digital automático do totem de autoatendimento EPBJC. Não respondas a esta mensagem.</p>
             </div>
           </div>
         `,

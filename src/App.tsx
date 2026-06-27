@@ -118,6 +118,11 @@ export default function App() {
 
       setUsuarioLogado({ ...usuarioLogado, saldo: novoSaldo });
       alert("Reserva confirmada!");
+
+      supabase.functions
+        .invoke('notificar-reserva', { body: { userId: usuarioLogado.id, data, tipoOpcao } })
+        .catch((err) => console.error('Notificação de fatura falhou:', err))
+
       carregarReservas();
     } catch (err: any) {
       alert(err.message);
