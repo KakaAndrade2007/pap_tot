@@ -84,7 +84,7 @@ export function Dashboard({
     { label: 'Notícias', dest: 'noticias', icon: <Newspaper size={22} /> },
     { label: 'Ementas', dest: 'ementas', icon: <UtensilsCrossed size={22} /> },
     { label: 'Reservar almoço', dest: 'calendario', icon: <Calendar size={22} /> },
-    { label: 'Histórico', dest: 'faturas', icon: <Receipt size={22} /> },
+    { label: 'Histórico de Reservas', dest: 'faturas', icon: <Receipt size={22} /> },
     { label: 'Carregar saldo', dest: 'pagamento', icon: <Wallet size={22} /> },
   ]
 
