@@ -59,6 +59,10 @@ export function Dashboard({
   const ementasDia = Array.isArray(ementas) ? ementas : []
   const ementaParaDia = dataSelecionada ? encontrarEmentaParaData(ementasDia, dataSelecionada) : null
 
+  const noticiasDestaque = Array.isArray(noticias)
+    ? noticias.filter((n: any) => n?.destaque === true || n?.destaque === 'true')
+    : []
+
   function handleDiaClick(iso: string) {
     setDataSelecionada(iso)
     setView('ementa-dia')
@@ -158,7 +162,7 @@ export function Dashboard({
         <HomeView
           ementas={ementasDia}
           isLoadingEmentas={Boolean(isLoadingEmentas)}
-          ultimaNoticia={Array.isArray(noticias) && noticias.length > 0 ? noticias[0] : null}
+          ultimaNoticia={noticiasDestaque.length > 0 ? noticiasDestaque[0] : null}
           onNavigate={navigate}
           onOpenSidebar={() => setSidebarOpen(true)}
         />
