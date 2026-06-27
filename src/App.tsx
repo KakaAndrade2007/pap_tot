@@ -214,66 +214,71 @@ export default function App() {
 
   if (!supabaseConfigured) {
     return (
-      <div className="totem-container" style={{ alignItems: 'center', justifyContent: 'center', gap: 24 }}>
-        <h2 style={{ color: '#f40808', textAlign: 'center', margin: 0 }}>Configuração em falta</h2>
-        <p style={{ textAlign: 'center', color: '#555', maxWidth: 480, margin: 0 }}>
-          Cria um ficheiro <strong>.env</strong> na raiz do projeto com as tuas credenciais do Supabase:
-        </p>
-        <pre style={{ background: '#f9f9f9', border: '2px solid #eee', borderRadius: 12, padding: '16px 24px', fontSize: 14, color: '#333', margin: 0 }}>
+      <>
+        <div className="totem-container" style={{ alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+          <h2 style={{ color: '#f40808', textAlign: 'center', margin: 0 }}>Configuração em falta</h2>
+          <p style={{ textAlign: 'center', color: '#555', maxWidth: 480, margin: 0 }}>
+            Cria um ficheiro <strong>.env</strong> na raiz do projeto com as tuas credenciais do Supabase:
+          </p>
+          <pre style={{ background: '#f9f9f9', border: '2px solid #eee', borderRadius: 12, padding: '16px 24px', fontSize: 14, color: '#333', margin: 0 }}>
 {`VITE_SUPABASE_URL=https://xxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGci...`}
-        </pre>
-        <p style={{ textAlign: 'center', color: '#888', fontSize: 14, margin: 0 }}>
-          Encontra estes valores em <strong>Project Settings → API</strong> no painel do Supabase.
-        </p>
-      </div>
+          </pre>
+          <p style={{ textAlign: 'center', color: '#888', fontSize: 14, margin: 0 }}>
+            Encontra estes valores em <strong>Project Settings → API</strong> no painel do Supabase.
+          </p>
+        </div>
+        <footer className="creators-footer">Created by Kaique and Kauã</footer>
+      </>
     )
   }
 
   return (
-    <div className="totem-container">
-      {step === 'splash' && (
-        <SplashScreen onStart={() => setStep('category')} />
-      )}
+    <>
+      <div className="totem-container">
+        {step === 'splash' && (
+          <SplashScreen onStart={() => setStep('category')} />
+        )}
 
-      {step === 'category' && (
-        <CategorySelector onSelect={(cat: string) => { setCategory(cat); setStep('login'); }} />
-      )}
+        {step === 'category' && (
+          <CategorySelector onSelect={(cat: string) => { setCategory(cat); setStep('login'); }} />
+        )}
 
-      {step === 'login' && (
-        <Login
-          category={category || ''}
-          onLogin={handleLogin}
-          onBack={() => setStep('category')}
-          onGoToRegister={() => setStep('register')}
-          isLoading={loading}
-        />
-      )}
+        {step === 'login' && (
+          <Login
+            category={category || ''}
+            onLogin={handleLogin}
+            onBack={() => setStep('category')}
+            isLoading={loading}
+          />
+        )}
 
-      {step === 'register' && (
-        <Register
-          category={category || ''}
-          onRegister={handleRegister}
-          onBack={() => setStep('login')}
-          isLoading={loading}
-        />
-      )}
+        {step === 'register' && (
+          <Register
+            category={category || ''}
+            onRegister={handleRegister}
+            onBack={() => setStep('login')}
+            isLoading={loading}
+          />
+        )}
 
-      {step === 'home' && usuarioLogado && (
-        <Dashboard
-          user={usuarioLogado}
-          reservas={reservas}
-          historico={historico}
-          noticias={noticias}
-          ementas={ementas}
-          onLogout={resetAll}
-          onNovaReserva={handleReserva}
-          onAdicionarSaldo={handleAdicionarSaldo}
-          isLoading={loading}
-          isLoadingNoticias={loadingNoticias}
-          isLoadingEmentas={loadingEmentas}
-        />
-      )}
-    </div>
+        {step === 'home' && usuarioLogado && (
+          <Dashboard
+            user={usuarioLogado}
+            reservas={reservas}
+            historico={historico}
+            noticias={noticias}
+            ementas={ementas}
+            onLogout={resetAll}
+            onNovaReserva={handleReserva}
+            onAdicionarSaldo={handleAdicionarSaldo}
+            isLoading={loading}
+            isLoadingNoticias={loadingNoticias}
+            isLoadingEmentas={loadingEmentas}
+          />
+        )}
+      </div>
+      <footer className="creators-footer">Created by Kaique and Kauã</footer>
+    </>
   )
 }

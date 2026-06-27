@@ -7,18 +7,17 @@ const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
   professor: 'Professor',
   funcionario: 'Funcionário',
-  pessoal_predio: 'Pessoal Prédio',
+  pessoal_predio: 'Outros',
 }
 
 interface LoginProps {
   category: string;
   onLogin: (user: string, pass: string) => void;
   onBack: () => void;
-  onGoToRegister: () => void;
   isLoading: boolean;
 }
 
-export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: LoginProps) {
+export function Login({ category, onLogin, onBack, isLoading }: LoginProps) {
   const tipoLabel = TIPO_LABELS[category] ?? category
   const [userName, setUserName] = useState('') // mudado para evitar conflito
   const [password, setPassword] = useState('')
@@ -61,10 +60,6 @@ export function Login({ category, onLogin, onBack, onGoToRegister, isLoading }: 
       >
         {isLoading ? 'A CARREGAR...' : 'ENTRAR'}
       </button>
-      
-      <p className="btn-toggle" onClick={onGoToRegister}>
-        Não tem conta? Registe-se aqui
-      </p>
     </div>
   )
 }

@@ -7,7 +7,7 @@ export function CategorySelector({ onSelect }: { onSelect: (cat: any) => void })
     { id: 'aluno', label: 'Aluno', icon: <GraduationCap size={50} /> },
     { id: 'professor', label: 'Professor', icon: <Apple size={50} /> },
     { id: 'funcionario', label: 'Funcionário', icon: <Briefcase size={50} /> },
-    { id: 'pessoal_predio', label: 'Pessoal Prédio', icon: <Building2 size={50} /> },
+    { id: 'pessoal_predio', label: 'Outros', icon: <Building2 size={50} /> },
   ]
 
   return (

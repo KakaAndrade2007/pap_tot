@@ -14,7 +14,7 @@ const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
   professor: 'Professor',
   funcionario: 'Funcionário',
-  pessoal_predio: 'Pessoal Prédio',
+  pessoal_predio: 'Outros',
 }
 
 type DashView = 'home' | 'calendario' | 'ementa-dia' | 'faturas' | 'pagamento' | 'noticias' | 'ementas'

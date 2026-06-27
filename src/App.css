@@ -34,6 +34,26 @@ body {
   width: 100vw;
 }
 
+/* CRÉDITO DOS CRIADORES — fixo em todas as páginas */
+.creators-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 4px 0;
+  padding-bottom: max(4px, env(safe-area-inset-bottom));
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  background: var(--text);
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
 /* 2. CONTENTOR PRINCIPAL — ECRÃ COMPLETO */
 .totem-container {
   display: flex;
