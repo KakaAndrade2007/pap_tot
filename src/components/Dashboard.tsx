@@ -36,7 +36,6 @@ function encontrarEmentaParaData(ementas: any[], iso: string): any | null {
 
 export function Dashboard({
   user,
-  reservas,
   historico,
   noticias,
   ementas,
@@ -190,7 +189,7 @@ export function Dashboard({
       )}
 
       {view === 'faturas' && (
-        <FaturasView historico={historico} reservas={reservas} aluno={user.nome} onBack={() => navigate('home')} />
+        <FaturasView historico={historico} aluno={user.nome} onBack={() => navigate('home')} />
       )}
 
       {view === 'pagamento' && (

@@ -15,16 +15,14 @@ interface SuporteViewProps {
 }
 
 export function SuporteView({ user, onBack }: SuporteViewProps) {
-  const [nome, setNome] = useState(user?.nome ?? '')
-  const [email, setEmail] = useState(user?.email ?? '')
+  const nome = user?.nome ?? ''
+  const email = user?.email ?? ''
   const [assunto, setAssunto] = useState('')
   const [mensagem, setMensagem] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [enviado, setEnviado] = useState(false)
   const [erro, setErro] = useState('')
 
-  const tecladoNome = useCampoComTeclado(nome, setNome, 'texto')
-  const tecladoEmail = useCampoComTeclado(email, setEmail, 'texto')
   const tecladoAssunto = useCampoComTeclado(assunto, setAssunto, 'texto')
   const tecladoMensagem = useCampoComTeclado(mensagem, setMensagem, 'texto')
 
@@ -78,12 +76,9 @@ export function SuporteView({ user, onBack }: SuporteViewProps) {
           id="sup-nome"
           type="text"
           className="sup-input"
-          placeholder="O teu nome"
           value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          disabled={enviando}
-          required
-          {...tecladoNome}
+          disabled
+          readOnly
         />
 
         <label className="sup-label" htmlFor="sup-email">Email</label>
@@ -91,12 +86,9 @@ export function SuporteView({ user, onBack }: SuporteViewProps) {
           id="sup-email"
           type="email"
           className="sup-input"
-          placeholder="o-teu-email@exemplo.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={enviando}
-          required
-          {...tecladoEmail}
+          disabled
+          readOnly
         />
 
         <label className="sup-label" htmlFor="sup-assunto">Assunto</label>

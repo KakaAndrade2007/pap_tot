@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronLeft, Printer } from 'lucide-react'
 import { imprimirFatura } from '../../services/impressora'
+import { parseDataEmentaParaISO } from '../../lib/ementasDisplay'
 
 interface HistoricoItem {
   prato: string
@@ -10,16 +11,8 @@ interface HistoricoItem {
   comprado_em: string
 }
 
-interface ReservaItem {
-  id: string
-  data_reserva: string
-  tipo_refeicao: string
-  created_at: string
-}
-
 interface FaturasViewProps {
   historico: HistoricoItem[]
-  reservas: ReservaItem[]
   aluno: string
   onBack: () => void
 }
@@ -46,6 +39,10 @@ function formatarData(iso: string) {
     month: '2-digit',
     year: 'numeric',
   })
+}
+
+function normalizarDataRefeicao(valor: string) {
+  return parseDataEmentaParaISO(valor) ?? valor
 }
 
 function BotaoImprimir({ dados }: { dados: Parameters<typeof imprimirFatura>[0] }) {
@@ -81,15 +78,15 @@ function BotaoImprimir({ dados }: { dados: Parameters<typeof imprimirFatura>[0] 
   )
 }
 
-export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewProps) {
-  const [filtroReservas, setFiltroReservas] = useState<'proximas' | 'anteriores'>('proximas')
-  const temDados = reservas.length > 0 || historico.length > 0
+export function FaturasView({ historico, aluno, onBack }: FaturasViewProps) {
+  const [filtro, setFiltro] = useState<'proximas' | 'anteriores'>('proximas')
+  const temDados = historico.length > 0
 
   const agora = new Date()
   const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`
-  const reservasProximas = reservas.filter((r) => r.data_reserva >= hoje)
-  const reservasAnteriores = reservas.filter((r) => r.data_reserva < hoje)
-  const reservasFiltradas = filtroReservas === 'proximas' ? reservasProximas : reservasAnteriores
+  const proximas = historico.filter((item) => normalizarDataRefeicao(item.data_refeicao) >= hoje)
+  const anteriores = historico.filter((item) => normalizarDataRefeicao(item.data_refeicao) < hoje)
+  const listaFiltrada = filtro === 'proximas' ? proximas : anteriores
 
   return (
     <div className="view-container">
@@ -101,72 +98,31 @@ export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewP
         <p className="sem-faturas">Ainda não tens registos de almoços.</p>
       ) : (
         <div className="historico-scroll">
-          {reservas.length > 0 && (
-            <>
-              <p className="historico-secao-titulo">Reservas</p>
-              <div className="faturas-tabs" style={{ marginBottom: '16px' }}>
-                <button
-                  type="button"
-                  className={`tab-btn${filtroReservas === 'proximas' ? ' tab-active' : ''}`}
-                  onClick={() => setFiltroReservas('proximas')}
-                >
-                  Próximas
-                </button>
-                <button
-                  type="button"
-                  className={`tab-btn${filtroReservas === 'anteriores' ? ' tab-active' : ''}`}
-                  onClick={() => setFiltroReservas('anteriores')}
-                >
-                  Anteriores
-                </button>
-              </div>
-              {reservasFiltradas.length === 0 ? (
-                <p className="sem-faturas" style={{ marginBottom: '16px' }}>
-                  {filtroReservas === 'proximas' ? 'Sem reservas futuras.' : 'Sem reservas anteriores.'}
-                </p>
-              ) : (
-                reservasFiltradas.map((item) => (
-                  <div key={item.id} className="historico-card">
-                    <div className="historico-card-topo">
-                      <span className="historico-prato">
-                        {PRATO_LABEL[item.tipo_refeicao] ?? item.tipo_refeicao}
-                      </span>
-                      <span className="historico-valor">2.50€</span>
-                    </div>
-                    <div className="historico-card-corpo">
-                      <div className="historico-linha">
-                        <span className="historico-label">Data</span>
-                        <span className="historico-valor-texto">{formatarData(item.data_reserva)}</span>
-                      </div>
-                      <div className="historico-linha">
-                        <span className="historico-label">Reservado em</span>
-                        <span className="historico-valor-texto">{formatarDataHora(item.created_at)}</span>
-                      </div>
-                      <div className="historico-linha">
-                        <span className="historico-label">Estado</span>
-                        <span className="historico-pin">Reservado</span>
-                      </div>
-                    </div>
-                    <BotaoImprimir
-                      dados={{
-                        tipo: 'reserva',
-                        prato: PRATO_LABEL[item.tipo_refeicao] ?? item.tipo_refeicao,
-                        data: formatarData(item.data_reserva),
-                        valor: 2.5,
-                        estado: 'Reservado',
-                        aluno,
-                      }}
-                    />
-                  </div>
-                ))
-              )}
-            </>
-          )}
+          <div className="faturas-tabs" style={{ marginBottom: '16px' }}>
+            <button
+              type="button"
+              className={`tab-btn${filtro === 'proximas' ? ' tab-active' : ''}`}
+              onClick={() => setFiltro('proximas')}
+            >
+              Próximas
+            </button>
+            <button
+              type="button"
+              className={`tab-btn${filtro === 'anteriores' ? ' tab-active' : ''}`}
+              onClick={() => setFiltro('anteriores')}
+            >
+              Anteriores
+            </button>
+          </div>
 
-          {historico.length > 0 && (
-            <>
-              <p className="historico-secao-titulo">Almoços consumidos</p>
-              {historico.map((item, i) => (
+          {listaFiltrada.length === 0 ? (
+            <p className="sem-faturas">
+              {filtro === 'proximas' ? 'Sem reservas futuras.' : 'Sem reservas anteriores.'}
+            </p>
+          ) : (
+            listaFiltrada.map((item, i) => {
+              const dataIso = normalizarDataRefeicao(item.data_refeicao)
+              return (
                 <div key={i} className="historico-card">
                   <div className="historico-card-topo">
                     <span className="historico-prato">
@@ -176,11 +132,11 @@ export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewP
                   </div>
                   <div className="historico-card-corpo">
                     <div className="historico-linha">
-                      <span className="historico-label">Refeição</span>
-                      <span className="historico-valor-texto">{item.data_refeicao}</span>
+                      <span className="historico-label">Data</span>
+                      <span className="historico-valor-texto">{formatarData(dataIso)}</span>
                     </div>
                     <div className="historico-linha">
-                      <span className="historico-label">Comprado em</span>
+                      <span className="historico-label">Reservado em</span>
                       <span className="historico-valor-texto">{formatarDataHora(item.comprado_em)}</span>
                     </div>
                     <div className="historico-linha">
@@ -188,19 +144,21 @@ export function FaturasView({ historico, reservas, aluno, onBack }: FaturasViewP
                       <span className="historico-pin">{item.pin}</span>
                     </div>
                   </div>
-                  <BotaoImprimir
-                    dados={{
-                      tipo: 'consumo',
-                      prato: PRATO_LABEL[item.prato] ?? item.prato,
-                      data: item.data_refeicao,
-                      valor: Number(item.valor),
-                      pin: item.pin,
-                      aluno,
-                    }}
-                  />
+                  {filtro === 'proximas' && (
+                    <BotaoImprimir
+                      dados={{
+                        tipo: 'consumo',
+                        prato: PRATO_LABEL[item.prato] ?? item.prato,
+                        data: formatarData(dataIso),
+                        valor: Number(item.valor),
+                        pin: item.pin,
+                        aluno,
+                      }}
+                    />
+                  )}
                 </div>
-              ))}
-            </>
+              )
+            })
           )}
         </div>
       )}

@@ -17,7 +17,6 @@ export default function App() {
   const [step, setStep] = useState<Step>('splash')
   const [category, setCategory] = useState<string | null>(null)
   const [usuarioLogado, setUsuarioLogado] = useState<any>(null)
-  const [reservas, setReservas] = useState<any[]>([])
   const [historico, setHistorico] = useState<any[]>([])
   const [noticias, setNoticias] = useState<any[]>([])
   const [ementas, setEmentas] = useState<any[]>([])
@@ -111,6 +110,7 @@ export default function App() {
     try {
       const novoSaldo = await ReservasService.criarReserva(
         usuarioLogado.id,
+        usuarioLogado.identificador,
         data,
         usuarioLogado.saldo,
         tipoOpcao
@@ -123,7 +123,7 @@ export default function App() {
         .invoke('notificar-reserva', { body: { userId: usuarioLogado.id, data, tipoOpcao } })
         .catch((err) => console.error('Notificação de fatura falhou:', err))
 
-      carregarReservas();
+      carregarHistorico();
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -149,19 +149,10 @@ export default function App() {
       supabase.functions
         .invoke('notificar-carregamento', { body: { userId: usuarioLogado.id, valor } })
         .catch((err) => console.error('Notificação de email falhou:', err))
-
-      carregarReservas()
     } catch (err: any) {
       alert('Erro ao carregar saldo: ' + (err?.message || 'desconhecido'))
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function carregarReservas() {
-    if (usuarioLogado?.id) {
-      const dados = await ReservasService.buscarMinhasReservas(usuarioLogado.id)
-      setReservas(dados)
     }
   }
 
@@ -201,7 +192,6 @@ export default function App() {
 
   useEffect(() => {
     if (step === 'home' && usuarioLogado?.id) {
-      carregarReservas()
       carregarNoticias()
       carregarEmentas()
       carregarHistorico()
@@ -209,7 +199,7 @@ export default function App() {
   }, [step, usuarioLogado?.id])
 
   function resetAll() {
-    setStep('splash'); setCategory(null); setUsuarioLogado(null); setReservas([]); setHistorico([]); setNoticias([]); setEmentas([]);
+    setStep('splash'); setCategory(null); setUsuarioLogado(null); setHistorico([]); setNoticias([]); setEmentas([]);
   }
 
   if (!supabaseConfigured) {
@@ -265,7 +255,6 @@ VITE_SUPABASE_ANON_KEY=eyJhbGci...`}
         {step === 'home' && usuarioLogado && (
           <Dashboard
             user={usuarioLogado}
-            reservas={reservas}
             historico={historico}
             noticias={noticias}
             ementas={ementas}
