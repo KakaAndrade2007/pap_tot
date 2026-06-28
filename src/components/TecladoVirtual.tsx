@@ -8,6 +8,7 @@ const LINHA_1 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
 const LINHA_2 = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l']
 const LINHA_3 = ['z', 'x', 'c', 'v', 'b', 'n', 'm']
 const LINHA_NUMERICA = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+const LINHA_SIMBOLOS = ['@', '.', '-', '_', "'"]
 
 export function TecladoVirtual() {
   const { campoAtivo, fecharTeclado } = useTeclado()
@@ -75,6 +76,7 @@ export function TecladoVirtual() {
                 <Delete size={20} />
               </button>
             </div>
+            <div className="teclado-linha">{LINHA_SIMBOLOS.map((c) => tecla(c))}</div>
             <div className="teclado-linha">
               <button type="button" className="teclado-tecla teclado-tecla--espaco" onClick={() => inserir(' ')}>
                 espaço

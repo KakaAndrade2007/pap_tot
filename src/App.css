@@ -1933,6 +1933,75 @@ body {
   color: var(--text);
 }
 
+/* SUPORTE */
+.sup-intro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #f7fcf3;
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  flex-shrink: 0;
+}
+
+.sup-intro-icon {
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.sup-intro-texto {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.sup-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sup-input,
+.sup-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  background: #fafafa;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.sup-textarea {
+  resize: vertical;
+  min-height: 110px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.sup-input:focus,
+.sup-textarea:focus {
+  border-color: var(--text);
+  background: #f7fcf3;
+}
+
+.sup-sucesso {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
 /* Cancelar */
 .pg-btn-cancelar {
   padding: 6px;

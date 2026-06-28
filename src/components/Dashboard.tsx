@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { LogOut, Menu, X, Home, Newspaper, UtensilsCrossed, Calendar, Receipt, Wallet } from 'lucide-react'
+import { LogOut, Menu, X, Home, Newspaper, UtensilsCrossed, Calendar, Receipt, Wallet, HelpCircle } from 'lucide-react'
 import { EpbjcLogo } from './EpbjcLogo'
 import { HomeView } from './dashboard/HomeView'
 import { CalendarioView } from './dashboard/CalendarioView'
@@ -8,6 +8,7 @@ import { FaturasView } from './dashboard/FaturasView'
 import { PagamentoView } from './dashboard/PagamentoView'
 import { NoticiasView } from './dashboard/NoticiasView'
 import { EmentasView } from './dashboard/EmentasView'
+import { SuporteView } from './dashboard/SuporteView'
 import { parseDataEmentaParaISO } from '../lib/ementasDisplay'
 
 const TIPO_LABELS: Record<string, string> = {
@@ -17,7 +18,7 @@ const TIPO_LABELS: Record<string, string> = {
   pessoal_predio: 'Outros',
 }
 
-type DashView = 'home' | 'calendario' | 'ementa-dia' | 'faturas' | 'pagamento' | 'noticias' | 'ementas'
+type DashView = 'home' | 'calendario' | 'ementa-dia' | 'faturas' | 'pagamento' | 'noticias' | 'ementas' | 'suporte'
 
 function encontrarEmentaParaData(ementas: any[], iso: string): any | null {
   const hoje = new Date()
@@ -81,6 +82,7 @@ export function Dashboard({
     ementas: 'Ementas',
     faturas: 'Histórico de Reservas',
     pagamento: 'Carregar saldo',
+    suporte: 'Suporte',
   }
 
   const NAV_ITEMS: { label: string; dest: DashView; icon: ReactNode }[] = [
@@ -90,6 +92,7 @@ export function Dashboard({
     { label: 'Reservar almoço', dest: 'calendario', icon: <Calendar size={22} /> },
     { label: 'Histórico de Reservas', dest: 'faturas', icon: <Receipt size={22} /> },
     { label: 'Carregar saldo', dest: 'pagamento', icon: <Wallet size={22} /> },
+    { label: 'Suporte', dest: 'suporte', icon: <HelpCircle size={22} /> },
   ]
 
   return (
@@ -213,6 +216,10 @@ export function Dashboard({
           onBack={() => navigate('home')}
           isLoading={Boolean(isLoadingEmentas)}
         />
+      )}
+
+      {view === 'suporte' && (
+        <SuporteView user={user} onBack={() => navigate('home')} />
       )}
     </div>
   )
