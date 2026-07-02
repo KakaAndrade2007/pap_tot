@@ -9,7 +9,7 @@ import { PagamentoView } from './dashboard/PagamentoView'
 import { NoticiasView } from './dashboard/NoticiasView'
 import { EmentasView } from './dashboard/EmentasView'
 import { SuporteView } from './dashboard/SuporteView'
-import { parseDataEmentaParaISO } from '../lib/ementasDisplay'
+import { parseDataEmentaParaISO, obterDiaEmenta, obterImagemEmenta, obterPratoEmenta } from '../lib/ementasDisplay'
 
 const TIPO_LABELS: Record<string, string> = {
   aluno: 'Aluno',
@@ -74,6 +74,18 @@ export function Dashboard({
     setDataSelecionada('')
   }
 
+  function handleComprarHoje() {
+    const hoje = new Date().toISOString().split('T')[0]
+    const ementa = encontrarEmentaParaData(ementasDia, hoje)
+    if (ementa) {
+      setDataSelecionada(hoje)
+      setView('ementa-dia')
+    } else {
+      navigate('calendario')
+    }
+  }
+
+
   const VIEW_TITLES: Partial<Record<DashView, string>> = {
     noticias: 'Notícias',
     calendario: 'Reservar almoço',
@@ -94,8 +106,10 @@ export function Dashboard({
     { label: 'Suporte', dest: 'suporte', icon: <HelpCircle size={22} /> },
   ]
 
+  const ementasCarousel = ementasDia.length > 0 ? [...ementasDia, ...ementasDia] : []
+
   return (
-    <div className="home-screen">
+    <div className={`home-screen${view === 'home' ? ' home-screen--home' : ''}`}>
       {/* Sidebar overlay */}
       {sidebarOpen && (
         <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
@@ -135,39 +149,75 @@ export function Dashboard({
         </button>
       </aside>
 
-      <div className={`totem-header${view === 'home' ? ' totem-header--home' : ''}`}>
-        {view === 'home' ? (
-          <div className="totem-header-start">
-            <EpbjcLogo className="school-logo school-logo--header" />
-            <div className="user-info user-info--home">
-              <div className="user-info-home-main">
-                <strong className="user-info-nome">{user.nome}</strong>
-                <span className="tipo-badge">{tipoLabel}</span>
-              </div>
-              <div className="user-info-home-saldo">
-                <span className="saldo-label">Saldo</span>
-                <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
+      {/* Header para vistas que não são home */}
+      {view !== 'home' && (
+        <div className="totem-header">
+          {VIEW_TITLES[view] && <h2 className="header-view-title">{VIEW_TITLES[view]}</h2>}
+          <button type="button" className="logout-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
+            <Menu />
+          </button>
+        </div>
+      )}
+
+      {/* Layout home: painel esquerdo + ementas de topo ao rodapé */}
+      {view === 'home' && (
+        <div className="home-layout">
+          <div className="home-layout-left">
+            <div className="home-layout-header">
+              <EpbjcLogo className="school-logo school-logo--header" />
+              <div className="user-info user-info--home">
+                <div className="user-info-home-saldo">
+                  <span className="saldo-label">Saldo</span>
+                  <span className="saldo-badge">{user.saldo.toFixed(2)}€</span>
+                </div>
+                <div className="user-info-home-main">
+                  <strong className="user-info-nome">{user.nome}</strong>
+                  <span className="tipo-badge">{tipoLabel}</span>
+                </div>
               </div>
             </div>
+            <HomeView
+              ultimaNoticia={noticiasDestaque.length > 0 ? noticiasDestaque[0] : null}
+              onNavigate={navigate}
+              onOpenSidebar={() => setSidebarOpen(true)}
+              onComprarHoje={handleComprarHoje}
+            />
           </div>
-        ) : (
-          <>
-            {VIEW_TITLES[view] && <h2 className="header-view-title">{VIEW_TITLES[view]}</h2>}
-            <button type="button" className="logout-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
-              <Menu />
-            </button>
-          </>
-        )}
-      </div>
 
-      {view === 'home' && (
-        <HomeView
-          ementas={ementasDia}
-          isLoadingEmentas={Boolean(isLoadingEmentas)}
-          ultimaNoticia={noticiasDestaque.length > 0 ? noticiasDestaque[0] : null}
-          onNavigate={navigate}
-          onOpenSidebar={() => setSidebarOpen(true)}
-        />
+          <div
+            className="home-layout-right"
+            onClick={() => navigate('ementas')}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && navigate('ementas')}
+            aria-label="Ver ementas"
+          >
+            <div className="ementa-marquee-viewport">
+              {isLoadingEmentas ? (
+                <p className="sem-faturas">A carregar ementa...</p>
+              ) : ementasDia.length === 0 ? (
+                <p className="sem-faturas">Não existem ementas disponíveis.</p>
+              ) : (
+                <div className="ementa-marquee-track">
+                  {ementasCarousel.map((item, index) => {
+                    const dia = obterDiaEmenta(item)
+                    const prato = obterPratoEmenta(item)
+                    const imagem = obterImagemEmenta(item)
+                    return (
+                      <article key={`${item?.id ?? prato}-${index}`} className="ementa-dia-card">
+                        {imagem ? <img src={imagem} alt={prato} className="ementa-dia-img" /> : null}
+                        <div className="ementa-dia-info">
+                          {dia ? <span className="ementa-dia-nome">{dia}</span> : null}
+                          <p className="ementa-dia-prato">{prato}</p>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {view === 'calendario' && (
