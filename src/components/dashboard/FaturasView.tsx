@@ -112,6 +112,8 @@ function BotaoImprimir({ dados }: { dados: Parameters<typeof imprimirFatura>[0] 
   )
 }
 
+const ITENS_POR_PAGINA = 5
+
 export function FaturasView({ historico, aluno, onBack }: FaturasViewProps) {
   const agora = new Date()
   const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`
@@ -119,8 +121,18 @@ export function FaturasView({ historico, aluno, onBack }: FaturasViewProps) {
   const anteriores = historico.filter((item) => normalizarDataRefeicao(item.data_refeicao) < hoje)
 
   const [filtro, setFiltro] = useState<'proximas' | 'anteriores'>(proximas.length > 0 ? 'proximas' : 'anteriores')
+  const [pagina, setPagina] = useState(1)
   const temDados = historico.length > 0
+
   const listaFiltrada = filtro === 'proximas' ? proximas : anteriores
+  const totalPaginas = Math.ceil(listaFiltrada.length / ITENS_POR_PAGINA)
+  const paginaAtual = Math.min(pagina, totalPaginas || 1)
+  const listaVisivel = listaFiltrada.slice((paginaAtual - 1) * ITENS_POR_PAGINA, paginaAtual * ITENS_POR_PAGINA)
+
+  function mudarFiltro(novo: 'proximas' | 'anteriores') {
+    setFiltro(novo)
+    setPagina(1)
+  }
 
   return (
     <div className="view-container">
@@ -136,14 +148,14 @@ export function FaturasView({ historico, aluno, onBack }: FaturasViewProps) {
             <button
               type="button"
               className={`tab-btn${filtro === 'proximas' ? ' tab-active' : ''}`}
-              onClick={() => setFiltro('proximas')}
+              onClick={() => mudarFiltro('proximas')}
             >
               Próximas
             </button>
             <button
               type="button"
               className={`tab-btn${filtro === 'anteriores' ? ' tab-active' : ''}`}
-              onClick={() => setFiltro('anteriores')}
+              onClick={() => mudarFiltro('anteriores')}
             >
               Anteriores
             </button>
@@ -154,45 +166,82 @@ export function FaturasView({ historico, aluno, onBack }: FaturasViewProps) {
               {filtro === 'proximas' ? 'Sem reservas futuras.' : 'Sem reservas anteriores.'}
             </p>
           ) : (
-            listaFiltrada.map((item, i) => {
-              const dataIso = normalizarDataRefeicao(item.data_refeicao)
-              return (
-                <div key={i} className="historico-card">
-                  <div className="historico-card-topo">
-                    <span className="historico-prato">
-                      {PRATO_LABEL[item.prato] ?? item.prato}
-                    </span>
-                    <span className="historico-valor">{Number(item.valor).toFixed(2)}€</span>
+            <>
+              {listaVisivel.map((item, i) => {
+                const dataIso = normalizarDataRefeicao(item.data_refeicao)
+                return (
+                  <div key={i} className="historico-card">
+                    <div className="historico-card-topo">
+                      <span className="historico-prato">
+                        {PRATO_LABEL[item.prato] ?? item.prato}
+                      </span>
+                      <span className="historico-valor">{Number(item.valor).toFixed(2)}€</span>
+                    </div>
+                    <div className="historico-card-corpo">
+                      <div className="historico-linha">
+                        <span className="historico-label">Data</span>
+                        <span className="historico-valor-texto">{formatarData(dataIso)}</span>
+                      </div>
+                      <div className="historico-linha">
+                        <span className="historico-label">Reservado em</span>
+                        <span className="historico-valor-texto">{formatarDataHora(item.comprado_em)}</span>
+                      </div>
+                      <div className="historico-linha">
+                        <span className="historico-label">PIN</span>
+                        <span className="historico-pin">{item.pin}</span>
+                      </div>
+                    </div>
+                    {filtro === 'proximas' && (
+                      <BotaoImprimir
+                        dados={{
+                          tipo: 'consumo',
+                          prato: PRATO_LABEL[item.prato] ?? item.prato,
+                          data: formatarData(dataIso),
+                          valor: Number(item.valor),
+                          pin: item.pin,
+                          aluno,
+                        }}
+                      />
+                    )}
                   </div>
-                  <div className="historico-card-corpo">
-                    <div className="historico-linha">
-                      <span className="historico-label">Data</span>
-                      <span className="historico-valor-texto">{formatarData(dataIso)}</span>
-                    </div>
-                    <div className="historico-linha">
-                      <span className="historico-label">Reservado em</span>
-                      <span className="historico-valor-texto">{formatarDataHora(item.comprado_em)}</span>
-                    </div>
-                    <div className="historico-linha">
-                      <span className="historico-label">PIN</span>
-                      <span className="historico-pin">{item.pin}</span>
-                    </div>
-                  </div>
-                  {filtro === 'proximas' && (
-                    <BotaoImprimir
-                      dados={{
-                        tipo: 'consumo',
-                        prato: PRATO_LABEL[item.prato] ?? item.prato,
-                        data: formatarData(dataIso),
-                        valor: Number(item.valor),
-                        pin: item.pin,
-                        aluno,
-                      }}
-                    />
-                  )}
+                )
+              })}
+
+              {totalPaginas > 1 && (
+                <div className="historico-paginacao">
+                  <button
+                    type="button"
+                    className="paginacao-btn paginacao-seta"
+                    onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                    disabled={paginaAtual === 1}
+                    aria-label="Página anterior"
+                  >
+                    ‹
+                  </button>
+
+                  {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      className={`paginacao-btn${paginaAtual === num ? ' paginacao-ativa' : ''}`}
+                      onClick={() => setPagina(num)}
+                    >
+                      {num}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    className="paginacao-btn paginacao-seta"
+                    onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                    disabled={paginaAtual === totalPaginas}
+                    aria-label="Próxima página"
+                  >
+                    ›
+                  </button>
                 </div>
-              )
-            })
+              )}
+            </>
           )}
         </div>
       )}

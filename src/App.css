@@ -699,6 +699,43 @@ body {
   border: 1px solid var(--border);
 }
 
+.ementas-filtro-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.ementas-filtro-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.ementas-filtro-chip {
+  flex-shrink: 0;
+  padding: clamp(7px, 1.1vh, 10px) clamp(14px, 2vw, 20px);
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.ementas-filtro-chip:active {
+  transform: scale(0.95);
+}
+
+.ementas-filtro-chip--ativo {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
 .ementa-dia-info {
   padding: clamp(10px, 1.5vh, 14px) clamp(12px, 2vw, 18px) clamp(10px, 1.5vh, 14px) 0;
   text-align: left;
@@ -1600,6 +1637,50 @@ body {
   font-size: clamp(0.78rem, 1.1vw, 0.88rem);
   color: #6fb72b;
   text-align: center;
+}
+
+.historico-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: clamp(12px, 1.8vh, 18px) 0 clamp(6px, 1vh, 10px);
+}
+
+.paginacao-btn {
+  min-width: clamp(36px, 5vw, 46px);
+  height: clamp(36px, 5vw, 46px);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paginacao-btn:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+.paginacao-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.paginacao-btn.paginacao-ativa {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
+.paginacao-seta {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 400;
 }
 
 /* 14. TOGGLE REGISTO / LOGIN */

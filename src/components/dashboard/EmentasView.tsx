@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { ChevronLeft, X, UtensilsCrossed } from 'lucide-react'
 import {
   formatarDataEmenta,
   obterDiaEmenta,
   obterImagemEmenta,
   obterPratoEmenta,
+  parseDataEmentaParaISO,
 } from '../../lib/ementasDisplay'
 
 interface EmentasViewProps {
@@ -13,8 +14,54 @@ interface EmentasViewProps {
   isLoading: boolean
 }
 
+function formatarLabelDia(raw: string): string {
+  const iso = parseDataEmentaParaISO(raw)
+  if (iso) {
+    return new Date(`${iso}T12:00:00`).toLocaleDateString('pt-PT', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+    })
+  }
+  return raw
+}
+
 export function EmentasView({ ementas, onBack, isLoading }: EmentasViewProps) {
   const [selectedEmenta, setSelectedEmenta] = useState<any | null>(null)
+  const [diaFiltro, setDiaFiltro] = useState<string | null>(null)
+
+  const hoje = useMemo(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  }, [])
+
+  const ementasFuturas = useMemo(
+    () => ementas.filter((item) => {
+      const raw = obterDiaEmenta(item)
+      if (!raw) return false
+      const iso = parseDataEmentaParaISO(raw) ?? ''
+      return iso >= hoje
+    }),
+    [ementas, hoje]
+  )
+
+  const diasUnicos = useMemo(() => {
+    const vistos = new Set<string>()
+    const lista: { raw: string; label: string; iso: string }[] = []
+    for (const item of ementasFuturas) {
+      const raw = obterDiaEmenta(item)
+      if (!raw || vistos.has(raw)) continue
+      vistos.add(raw)
+      const iso = parseDataEmentaParaISO(raw) ?? raw
+      lista.push({ raw, label: formatarLabelDia(raw), iso })
+    }
+    return lista.sort((a, b) => a.iso.localeCompare(b.iso))
+  }, [ementasFuturas])
+
+  const ementasFiltradas = useMemo(
+    () => diaFiltro ? ementasFuturas.filter((item) => obterDiaEmenta(item) === diaFiltro) : ementasFuturas,
+    [ementasFuturas, diaFiltro]
+  )
 
   return (
     <div className="view-container" style={{ position: 'relative' }}>
@@ -24,36 +71,64 @@ export function EmentasView({ ementas, onBack, isLoading }: EmentasViewProps) {
 
       {isLoading ? (
         <p className="sem-faturas">A carregar ementas...</p>
-      ) : ementas.length === 0 ? (
+      ) : ementasFuturas.length === 0 ? (
         <p className="sem-faturas">Não existem ementas disponíveis.</p>
       ) : (
-        <div className="noticias-scroll">
-          {ementas.map((item: any) => {
-            const dia = obterDiaEmenta(item)
-            const prato = obterPratoEmenta(item)
-            const dataExtra = formatarDataEmenta(item)
-            const imagem = obterImagemEmenta(item)
-
-            return (
-              <article
-                key={item?.id ?? `${dia}-${prato}`}
-                className="noticia-card"
-                onClick={() => setSelectedEmenta(item)}
-                style={{ cursor: 'pointer' }}
+        <>
+          {diasUnicos.length > 1 && (
+            <div className="ementas-filtro-scroll">
+              <button
+                type="button"
+                className={`ementas-filtro-chip${diaFiltro === null ? ' ementas-filtro-chip--ativo' : ''}`}
+                onClick={() => setDiaFiltro(null)}
               >
-                <div className="noticia-card-topo">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <UtensilsCrossed size={20} />
-                    <span>{dia || 'Ementa'}</span>
-                  </div>
-                  {dataExtra ? <span>{dataExtra}</span> : null}
-                </div>
-                <h3 className="ementa-pratos-texto">{prato}</h3>
-                {imagem ? <img src={imagem} alt={dia || 'Ementa'} className="ementa-card-img" /> : null}
-              </article>
-            )
-          })}
-        </div>
+                Todos
+              </button>
+              {diasUnicos.map(({ raw, label }) => (
+                <button
+                  key={raw}
+                  type="button"
+                  className={`ementas-filtro-chip${diaFiltro === raw ? ' ementas-filtro-chip--ativo' : ''}`}
+                  onClick={() => setDiaFiltro(raw === diaFiltro ? null : raw)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="noticias-scroll">
+            {ementasFiltradas.length === 0 ? (
+              <p className="sem-faturas">Sem ementas para este dia.</p>
+            ) : (
+              ementasFiltradas.map((item: any) => {
+                const dia = obterDiaEmenta(item)
+                const prato = obterPratoEmenta(item)
+                const dataExtra = formatarDataEmenta(item)
+                const imagem = obterImagemEmenta(item)
+
+                return (
+                  <article
+                    key={item?.id ?? `${dia}-${prato}`}
+                    className="noticia-card"
+                    onClick={() => setSelectedEmenta(item)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="noticia-card-topo">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <UtensilsCrossed size={20} />
+                        <span>{dia || 'Ementa'}</span>
+                      </div>
+                      {dataExtra ? <span>{dataExtra}</span> : null}
+                    </div>
+                    <h3 className="ementa-pratos-texto">{prato}</h3>
+                    {imagem ? <img src={imagem} alt={dia || 'Ementa'} className="ementa-card-img" /> : null}
+                  </article>
+                )
+              })
+            )}
+          </div>
+        </>
       )}
 
       {selectedEmenta && (
